@@ -2,7 +2,7 @@
  * @Author: Alex chenzeyongjsj@163.com 
  * @Date: 2018-03-05 16:43:42 
  * @Last Modified by: Alex chenzeyongjsj@163.com
- * @Last Modified time: 2018-03-22 16:03:09
+ * @Last Modified time: 2018-03-22 16:14:02
  */
 
 <template>
@@ -178,88 +178,6 @@ export default {
             }
             //
           }
-          /* for (let i = 0; i < my_timeTable.data.length; i++) {
-            //
-            if (my_timeTable.data[i].first[2] == "请假") {
-              that.myTimeTableList[i].first.push("keepInfo-leave");
-            } else if (my_timeTable.data[i].first[2] == "旷课") {
-              that.myTimeTableList[i].first.push("keepInfo-kuangke");
-            } else if (my_timeTable.data[i].first[2] == "正常") {
-              that.myTimeTableList[i].first.push("keepInfo-normal");
-            }
-            //
-            if (my_timeTable.data[i].second[2] == "请假") {
-              that.myTimeTableList[i].second.push("keepInfo-leave");
-            } else if (my_timeTable.data[i].second[2] == "旷课") {
-              that.myTimeTableList[i].second.push("keepInfo-kuangke");
-            } else if (my_timeTable.data[i].second[2] == "正常") {
-              that.myTimeTableList[i].second.push("keepInfo-normal");
-            }
-            //
-            if (my_timeTable.data[i].thirdly[2] == "请假") {
-              that.myTimeTableList[i].thirdly.push("keepInfo-leave");
-            } else if (my_timeTable.data[i].thirdly[2] == "旷课") {
-              that.myTimeTableList[i].thirdly.push("keepInfo-kuangke");
-            } else if (my_timeTable.data[i].thirdly[2] == "正常") {
-              that.myTimeTableList[i].thirdly.push("keepInfo-normal");
-            }
-            //
-            if (my_timeTable.data[i].fourthly[2] == "请假") {
-              that.myTimeTableList[i].fourthly.push("keepInfo-leave");
-            } else if (my_timeTable.data[i].fourthly[2] == "旷课") {
-              that.myTimeTableList[i].fourthly.push("keepInfo-kuangke");
-            } else if (my_timeTable.data[i].fourthly[2] == "正常") {
-              that.myTimeTableList[i].fourthly.push("keepInfo-normal");
-            }
-            //
-            if (my_timeTable.data[i].fifth[2] == "请假") {
-              that.myTimeTableList[i].fifth.push("keepInfo-leave");
-            } else if (my_timeTable.data[i].fifth[2] == "旷课") {
-              that.myTimeTableList[i].fifth.push("keepInfo-kuangke");
-            } else if (my_timeTable.data[i].fifth[2] == "正常") {
-              that.myTimeTableList[i].fifth.push("keepInfo-normal");
-            }
-            //
-            if (my_timeTable.data[i].sixth[2] == "请假") {
-              that.myTimeTableList[i].sixth.push("keepInfo-leave");
-            } else if (my_timeTable.data[i].sixth[2] == "旷课") {
-              that.myTimeTableList[i].sixth.push("keepInfo-kuangke");
-            } else if (my_timeTable.data[i].sixth[2] == "正常") {
-              that.myTimeTableList[i].sixth.push("keepInfo-normal");
-            }
-            //
-            if (my_timeTable.data[i].seventh[2] == "请假") {
-              that.myTimeTableList[i].seventh.push("keepInfo-leave");
-            } else if (my_timeTable.data[i].seventh[2] == "旷课") {
-              that.myTimeTableList[i].seventh.push("keepInfo-kuangke");
-            } else if (my_timeTable.data[i].seventh[2] == "正常") {
-              that.myTimeTableList[i].seventh.push("keepInfo-normal");
-            }
-            //
-            if (my_timeTable.data[i].eighth[2] == "请假") {
-              that.myTimeTableList[i].eighth.push("keepInfo-leave");
-            } else if (my_timeTable.data[i].eighth[2] == "旷课") {
-              that.myTimeTableList[i].eighth.push("keepInfo-kuangke");
-            } else if (my_timeTable.data[i].eighth[2] == "正常") {
-              that.myTimeTableList[i].eighth.push("keepInfo-normal");
-            }
-            //
-            if (my_timeTable.data[i].ninth[2] == "请假") {
-              that.myTimeTableList[i].ninth.push("keepInfo-leave");
-            } else if (my_timeTable.data[i].ninth[2] == "旷课") {
-              that.myTimeTableList[i].ninth.push("keepInfo-kuangke");
-            } else if (my_timeTable.data[i].ninth[2] == "正常") {
-              that.myTimeTableList[i].ninth.push("keepInfo-normal");
-            }
-            //
-            if (my_timeTable.data[i].tenth[2] == "请假") {
-              that.myTimeTableList[i].tenth.push("keepInfo-leave");
-            } else if (my_timeTable.data[i].tenth[2] == "旷课") {
-              that.myTimeTableList[i].tenth.push("keepInfo-kuangke");
-            } else if (my_timeTable.data[i].tenth[2] == "正常") {
-              that.myTimeTableList[i].tenth.push("keepInfo-normal");
-            }
-          } */
           that.filterList = filter_list.data;
           that.week = that.filterList.week;
           that.class_filter = that.filterList.class;

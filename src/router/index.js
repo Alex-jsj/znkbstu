@@ -2,7 +2,7 @@
  * @Author: Alex chenzeyongjsj@163.com 
  * @Date: 2018-02-28 16:43:09 
  * @Last Modified by: Alex chenzeyongjsj@163.com
- * @Last Modified time: 2018-03-22 14:59:06
+ * @Last Modified time: 2018-03-22 16:45:26
  */
 import Vue from 'vue'
 import Router from 'vue-router'
@@ -16,8 +16,10 @@ import classroom from '@/pages/classroom/classroom' //教室预约
 import classroomReservation from '@/pages/classroom/classroomReservation' //教室预约
 import reservationInfo from '@/pages/classroom/reservationInfo' //预约记录
 import reservationRecord from '@/pages/classroom/reservationRecord' //预约记录
-import studentsLeave from '@/pages/studentsLeave/studentsLeave' //学生请假
-import leaveInfo from '@/pages/studentsLeave/leaveInfo' //学生请假详情页
+import leave from '@/pages/studentsLeave/leave' //请假
+import leaveList from '@/pages/studentsLeave/leaveList' //请假记录
+import leaveApply from '@/pages/studentsLeave/leaveApply' //请假
+import leaveInfo from '@/pages/studentsLeave/leaveInfo' //请假详情页
 import andClass from '@/pages/andClass/andClass' //并课申请
 import andClassApply from '@/pages/andClass/andClassApply' //并课申请
 import andClassRecord from '@/pages/andClass/andClassRecord' //并课申请记录
@@ -59,8 +61,22 @@ export default new Router({
             component: messageInfo,
         },
         {
-            path: '/pages/studentsLeave/studentsLeave',
-            component: studentsLeave,
+            path: '/pages/studentsLeave/leave',
+            component: leave,
+            children: [{
+                    path: '/',
+                    redirect: 'leaveList',
+                    component: leaveList
+                },
+                {
+                    path: 'leaveList',
+                    component: leaveList
+                },
+                {
+                    path: 'leaveApply',
+                    component: leaveApply
+                },
+            ]
         },
         {
             path: '/pages/studentsLeave/leaveInfo',

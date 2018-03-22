@@ -2,7 +2,7 @@
  * @Author: Alex chenzeyongjsj@163.com 
  * @Date: 2018-03-05 16:43:42 
  * @Last Modified by: Alex chenzeyongjsj@163.com
- * @Last Modified time: 2018-03-22 15:01:43
+ * @Last Modified time: 2018-03-22 16:30:43
  */
 
 <template>
@@ -91,7 +91,7 @@ export default {
           img_src: "./static/img/icon3.png",
           img_class: "menu-icon icon3",
           menu_title: "我要请假",
-          menu_link: "/pages/studentsLeave/studentsLeave",
+          menu_link: "/pages/studentsLeave/leave",
           new_message: false
         },
         {
@@ -128,7 +128,7 @@ export default {
           img_src: "./static/img/icon3-3.png",
           img_class: "menu-icon icon3",
           menu_title: "我要请假",
-          menu_link: "/pages/studentsLeave/studentsLeave",
+          menu_link: "/pages/studentsLeave/leave",
           new_message: false
         },
         {

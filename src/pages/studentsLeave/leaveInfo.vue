@@ -2,7 +2,7 @@
  * @Author: Alex chenzeyongjsj@163.com 
  * @Date: 2018-03-14 11:10:34 
  * @Last Modified by: Alex chenzeyongjsj@163.com
- * @Last Modified time: 2018-03-14 16:44:21
+ * @Last Modified time: 2018-03-22 16:43:26
  */
 
 
@@ -66,7 +66,7 @@ export default {
   },
   mounted: function() {
     //修改页面title
-    document.title = "学生请假";
+    document.title = "请假详情";
     //判断登录状态
     if (!localStorage.getItem("userToken")) {
       //跳转到登录页

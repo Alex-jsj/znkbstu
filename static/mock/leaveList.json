@@ -1,80 +1,80 @@
 [{
         "applicationTime": "2018-01-01",
-        "name": "张三",
+        "type": "事假",
         "uid": 0,
-        "classroom": "14产品3班",
+
         "status": "审核中",
         "statusId": 1
     },
     {
         "applicationTime": "2018-01-01",
-        "name": "李四",
+        "type": "病假",
         "uid": 0,
-        "classroom": "14产品3班",
-        "status": "已通过",
+
+        "status": "同意",
         "statusId": 2
     },
     {
         "applicationTime": "2018-01-01",
-        "name": "王五",
+        "type": "事假",
         "uid": 0,
-        "classroom": "14产品3班",
-        "status": "已驳回",
+
+        "status": "驳回",
         "statusId": 3
     },
     {
         "applicationTime": "2018-01-01",
-        "name": "张三",
+        "type": "事假",
         "uid": 0,
-        "classroom": "14产品3班",
+
         "status": "审核中",
         "statusId": 1
     },
     {
         "applicationTime": "2018-01-01",
-        "name": "李四",
+        "type": "病假",
         "uid": 0,
-        "classroom": "14产品3班",
-        "status": "已通过",
+
+        "status": "同意",
         "statusId": 2
     },
     {
         "applicationTime": "2018-01-01",
-        "name": "王五",
+        "type": "事假",
         "uid": 0,
-        "classroom": "14产品3班",
-        "status": "已驳回",
+
+        "status": "驳回",
         "statusId": 3
     },
     {
         "applicationTime": "2018-01-01",
-        "name": "张三",
+        "type": "事假",
         "uid": 0,
-        "classroom": "14产品3班",
+
         "status": "审核中",
         "statusId": 1
     },
     {
         "applicationTime": "2018-01-01",
-        "name": "李四",
+        "type": "事假",
         "uid": 0,
-        "classroom": "14产品3班",
+
         "status": "审核中",
         "statusId": 1
     },
     {
         "applicationTime": "2018-01-01",
-        "name": "王五",
+        "type": "事假",
         "uid": 0,
-        "classroom": "14产品3班",
+
         "status": "审核中",
         "statusId": 1
     },
     {
         "applicationTime": "2018-01-01",
-        "name": "张三",
+        "type": "事假",
         "uid": 0,
-        "classroom": "14产品3班",
+
         "status": "审核中",
         "statusId": 1
     }
