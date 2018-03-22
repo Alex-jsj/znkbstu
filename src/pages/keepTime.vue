@@ -2,7 +2,7 @@
  * @Author: Alex chenzeyongjsj@163.com 
  * @Date: 2018-03-05 16:43:42 
  * @Last Modified by: Alex chenzeyongjsj@163.com
- * @Last Modified time: 2018-03-22 10:22:51
+ * @Last Modified time: 2018-03-22 16:03:09
  */
 
 <template>
@@ -38,84 +38,74 @@
               <p class="week">{{list.date[0]}}</p>
               <p class="week-date">{{list.date[1]}}</p>
             </li>
-            <li class="item" :class="{'bg':list.first[0]}" @click="keepInfo(list.first[1])">
+            <li class="item" :class="{'bg':list.first[0]}">
               <p class="first">{{list.first[0]}}</p>
               <p class="second">{{list.first[1]}}</p>
-              <p>{{list.first[2]}}</p>
-              <p class="keepInfo" :class="list.first[3]?'keepInfo-active':''">
-                <span>{{list.first[3]}}{{list.first[4]}}</span>
+              <p class="keepInfo" :class="list.first[3]">
+                <span>{{list.first[2]}}</span>
               </p>
             </li>
-            <li class="item" :class="{'bg':list.second[0]}" @click="keepInfo(list.second[1])">
+            <li class="item" :class="{'bg':list.second[0]}">
               <p class="first">{{list.second[0]}}</p>
               <p class="second">{{list.second[1]}}</p>
-              <p>{{list.second[2]}}</p>
-              <p class="keepInfo" :class="list.second[3]?'keepInfo-active':''">
-                <span>{{list.second[3]}}{{list.second[4]}}</span>
+              <p class="keepInfo" :class="list.second[3]">
+                <span>{{list.second[2]}}</span>
               </p>
             </li>
-            <li class="item" :class="{'bg':list.thirdly[0]}" @click="keepInfo(list.thirdly[1])">
+            <li class="item" :class="{'bg':list.thirdly[0]}">
               <p class="first">{{list.thirdly[0]}}</p>
               <p class="second">{{list.thirdly[1]}}</p>
-              <p>{{list.thirdly[2]}}</p>
-              <p class="keepInfo" :class="list.thirdly[3]?'keepInfo-active':''">
-                <span>{{list.thirdly[3]}}{{list.thirdly[4]}}</span>
+              <p class="keepInfo" :class="list.thirdly[3]">
+                <span>{{list.thirdly[2]}}</span>
               </p>
             </li>
-            <li class="item" :class="{'bg':list.fourthly[0]}" @click="keepInfo(list.fourthly[1])">
+            <li class="item" :class="{'bg':list.fourthly[0]}">
               <p class="first">{{list.fourthly[0]}}</p>
               <p class="second">{{list.fourthly[1]}}</p>
-              <p>{{list.fourthly[2]}}</p>
-              <p class="keepInfo" :class="list.fourthly[3]?'keepInfo-active':''">
-                <span>{{list.fourthly[3]}}{{list.fourthly[4]}}</span>
+              <p class="keepInfo" :class="list.fourthly[3]">
+                <span>{{list.fourthly[2]}}</span>
               </p>
             </li>
-            <li class="item" :class="{'bg':list.fifth[0]}" @click="keepInfo(list.fifth[1])">
+            <li class="item" :class="{'bg':list.fifth[0]}">
               <p class="first">{{list.fifth[0]}}</p>
               <p class="second">{{list.fifth[1]}}</p>
-              <p>{{list.fifth[2]}}</p>
-              <p class="keepInfo" :class="list.fifth[3]?'keepInfo-active':''">
-                <span>{{list.fifth[3]}}{{list.fifth[4]}}</span>
+              <p class="keepInfo" :class="list.fifth[3]">
+                <span>{{list.fifth[2]}}</span>
               </p>
             </li>
-            <li class="item" :class="{'bg':list.sixth[0]}" @click="keepInfo(list.sixth[1])">
+            <li class="item" :class="{'bg':list.sixth[0]}">
               <p class="first">{{list.sixth[0]}}</p>
               <p class="second">{{list.sixth[1]}}</p>
-              <p>{{list.sixth[2]}}</p>
-              <p class="keepInfo" :class="list.sixth[3]?'keepInfo-active':''">
-                <span>{{list.sixth[3]}}{{list.sixth[4]}}</span>
+              <p class="keepInfo" :class="list.sixth[3]">
+                <span>{{list.sixth[2]}}</span>
               </p>
             </li>
-            <li class="item" :class="{'bg':list.seventh[0]}" @click="keepInfo(list.seventh[1])">
+            <li class="item" :class="{'bg':list.seventh[0]}">
               <p class="first">{{list.seventh[0]}}</p>
               <p class="second">{{list.seventh[1]}}</p>
-              <p>{{list.seventh[2]}}</p>
-              <p class="keepInfo" :class="list.seventh[3]?'keepInfo-active':''">
-                <span>{{list.seventh[3]}}{{list.seventh[4]}}</span>
+              <p class="keepInfo" :class="list.seventh[3]">
+                <span>{{list.seventh[2]}}</span>
               </p>
             </li>
-            <li class="item" :class="{'bg':list.eighth[0]}" @click="keepInfo(list.eighth[1])">
+            <li class="item" :class="{'bg':list.eighth[0]}">
               <p class="first">{{list.eighth[0]}}</p>
               <p class="second">{{list.eighth[1]}}</p>
-              <p>{{list.eighth[2]}}</p>
-              <p class="keepInfo" :class="list.eighth[3]?'keepInfo-active':''">
-                <span>{{list.eighth[3]}}{{list.eighth[4]}}</span>
+              <p class="keepInfo" :class="list.eighth[3]">
+                <span>{{list.eighth[2]}}</span>
               </p>
             </li>
-            <li class="item" :class="{'bg':list.ninth[0]}" @click="keepInfo(list.ninth[1])">
+            <li class="item" :class="{'bg':list.ninth[0]}">
               <p class="first">{{list.ninth[0]}}</p>
               <p class="second">{{list.ninth[1]}}</p>
-              <p>{{list.ninth[2]}}</p>
-              <p class="keepInfo" :class="list.ninth[3]?'keepInfo-active':''">
-                <span>{{list.ninth[3]}}{{list.ninth[4]}}</span>
+              <p class="keepInfo" :class="list.ninth[3]">
+                <span>{{list.ninth[2]}}</span>
               </p>
             </li>
-            <li class="item" :class="{'bg':list.tenth[0]}" @click="keepInfo(list.tenth[1])">
+            <li class="item" :class="{'bg':list.tenth[0]}">
               <p class="first">{{list.tenth[0]}}</p>
               <p class="second">{{list.tenth[1]}}</p>
-              <p>{{list.tenth[2]}}</p>
-              <p class="keepInfo" :class="list.tenth[3]?'keepInfo-active':''">
-                <span>{{list.tenth[3]}}{{list.tenth[4]}}</span>
+              <p class="keepInfo" :class="list.tenth[3]">
+                <span>{{list.tenth[2]}}</span>
               </p>
             </li>
           </ul>
@@ -147,7 +137,7 @@ export default {
   },
   mounted: function() {
     //修改页面title
-    document.title = "学生考勤";
+    document.title = "考勤查询";
     //判断登录状态
     if (!localStorage.getItem("userToken")) {
       //跳转到登录页
@@ -167,6 +157,109 @@ export default {
         that.$http.spread(function(my_timeTable, filter_list) {
           // 两个请求现在都执行完成
           that.myTimeTableList = my_timeTable.data;
+          for (let i = 0; i < my_timeTable.data.length; i++) {
+            for (let key in my_timeTable.data[i]) {
+              if (
+                my_timeTable.data[i][key][2] &&
+                my_timeTable.data[i][key][2] == "请假"
+              ) {
+                that.myTimeTableList[i][key].push("keepInfo-leave");
+              } else if (
+                my_timeTable.data[i][key][2] &&
+                my_timeTable.data[i][key][2] == "旷课"
+              ) {
+                that.myTimeTableList[i][key].push("keepInfo-kuangke");
+              } else if (
+                my_timeTable.data[i][key][2] &&
+                my_timeTable.data[i][key][2] == "正常"
+              ) {
+                that.myTimeTableList[i][key].push("keepInfo-normal");
+              }
+            }
+            //
+          }
+          /* for (let i = 0; i < my_timeTable.data.length; i++) {
+            //
+            if (my_timeTable.data[i].first[2] == "请假") {
+              that.myTimeTableList[i].first.push("keepInfo-leave");
+            } else if (my_timeTable.data[i].first[2] == "旷课") {
+              that.myTimeTableList[i].first.push("keepInfo-kuangke");
+            } else if (my_timeTable.data[i].first[2] == "正常") {
+              that.myTimeTableList[i].first.push("keepInfo-normal");
+            }
+            //
+            if (my_timeTable.data[i].second[2] == "请假") {
+              that.myTimeTableList[i].second.push("keepInfo-leave");
+            } else if (my_timeTable.data[i].second[2] == "旷课") {
+              that.myTimeTableList[i].second.push("keepInfo-kuangke");
+            } else if (my_timeTable.data[i].second[2] == "正常") {
+              that.myTimeTableList[i].second.push("keepInfo-normal");
+            }
+            //
+            if (my_timeTable.data[i].thirdly[2] == "请假") {
+              that.myTimeTableList[i].thirdly.push("keepInfo-leave");
+            } else if (my_timeTable.data[i].thirdly[2] == "旷课") {
+              that.myTimeTableList[i].thirdly.push("keepInfo-kuangke");
+            } else if (my_timeTable.data[i].thirdly[2] == "正常") {
+              that.myTimeTableList[i].thirdly.push("keepInfo-normal");
+            }
+            //
+            if (my_timeTable.data[i].fourthly[2] == "请假") {
+              that.myTimeTableList[i].fourthly.push("keepInfo-leave");
+            } else if (my_timeTable.data[i].fourthly[2] == "旷课") {
+              that.myTimeTableList[i].fourthly.push("keepInfo-kuangke");
+            } else if (my_timeTable.data[i].fourthly[2] == "正常") {
+              that.myTimeTableList[i].fourthly.push("keepInfo-normal");
+            }
+            //
+            if (my_timeTable.data[i].fifth[2] == "请假") {
+              that.myTimeTableList[i].fifth.push("keepInfo-leave");
+            } else if (my_timeTable.data[i].fifth[2] == "旷课") {
+              that.myTimeTableList[i].fifth.push("keepInfo-kuangke");
+            } else if (my_timeTable.data[i].fifth[2] == "正常") {
+              that.myTimeTableList[i].fifth.push("keepInfo-normal");
+            }
+            //
+            if (my_timeTable.data[i].sixth[2] == "请假") {
+              that.myTimeTableList[i].sixth.push("keepInfo-leave");
+            } else if (my_timeTable.data[i].sixth[2] == "旷课") {
+              that.myTimeTableList[i].sixth.push("keepInfo-kuangke");
+            } else if (my_timeTable.data[i].sixth[2] == "正常") {
+              that.myTimeTableList[i].sixth.push("keepInfo-normal");
+            }
+            //
+            if (my_timeTable.data[i].seventh[2] == "请假") {
+              that.myTimeTableList[i].seventh.push("keepInfo-leave");
+            } else if (my_timeTable.data[i].seventh[2] == "旷课") {
+              that.myTimeTableList[i].seventh.push("keepInfo-kuangke");
+            } else if (my_timeTable.data[i].seventh[2] == "正常") {
+              that.myTimeTableList[i].seventh.push("keepInfo-normal");
+            }
+            //
+            if (my_timeTable.data[i].eighth[2] == "请假") {
+              that.myTimeTableList[i].eighth.push("keepInfo-leave");
+            } else if (my_timeTable.data[i].eighth[2] == "旷课") {
+              that.myTimeTableList[i].eighth.push("keepInfo-kuangke");
+            } else if (my_timeTable.data[i].eighth[2] == "正常") {
+              that.myTimeTableList[i].eighth.push("keepInfo-normal");
+            }
+            //
+            if (my_timeTable.data[i].ninth[2] == "请假") {
+              that.myTimeTableList[i].ninth.push("keepInfo-leave");
+            } else if (my_timeTable.data[i].ninth[2] == "旷课") {
+              that.myTimeTableList[i].ninth.push("keepInfo-kuangke");
+            } else if (my_timeTable.data[i].ninth[2] == "正常") {
+              that.myTimeTableList[i].ninth.push("keepInfo-normal");
+            }
+            //
+            if (my_timeTable.data[i].tenth[2] == "请假") {
+              that.myTimeTableList[i].tenth.push("keepInfo-leave");
+            } else if (my_timeTable.data[i].tenth[2] == "旷课") {
+              that.myTimeTableList[i].tenth.push("keepInfo-kuangke");
+            } else if (my_timeTable.data[i].tenth[2] == "正常") {
+              that.myTimeTableList[i].tenth.push("keepInfo-normal");
+            }
+          } */
           that.filterList = filter_list.data;
           that.week = that.filterList.week;
           that.class_filter = that.filterList.class;
@@ -178,13 +271,7 @@ export default {
     weekChange() {},
     classChange() {},
     //筛选课表ajax
-    timetable_filter() {},
-    //进入课程详情页
-    keepInfo(val) {
-      if (val) {
-        this.$router.push({ path: "/pages/keepTime/keepInfo" });
-      }
-    }
+    timetable_filter() {}
   }
 };
 </script>
@@ -280,7 +367,7 @@ export default {
     }
     .container {
       width: 100%;
-      background: #fff;
+      background: #5d5d5d;
       margin-top: -2.25rem;
       overflow: hidden;
       .overflow-container {
@@ -311,30 +398,25 @@ export default {
               }
             }
             .bg {
-              color: #808080;
+              color: #b3b3b3;
               background: #f2f2f2;
             }
           }
           &:nth-child(3) {
             .bg {
-              background: #ffb8c4;
-            }
-          }
-          &:nth-child(4) {
-            .bg {
               background: #808080;
             }
           }
-          &:nth-child(6) {
+          &:nth-child(5) {
             .bg {
-              background: #ffb8c4;
+              background: #808080;
             }
           }
           .item {
             width: 100%;
             height: 3.75rem;
-            border-bottom: 1px solid #ddd;
-            border-right: 1px solid #ddd;
+            border-bottom: 1px solid #9f9fa0;
+            border-right: 1px solid #9f9fa0;
             font-size: 0.47rem;
             padding: 0.2rem;
             overflow: hidden;
@@ -342,14 +424,14 @@ export default {
             position: relative;
             &:first-child {
               height: 2.25rem;
-              border-bottom: 0 solid #ddd;
-              border-right: 0 solid #ddd;
+              border-bottom: 0 solid #9f9fa0;
+              border-right: 0 solid #9f9fa0;
               background: #fff;
               padding: 0;
               font-size: 0.6rem;
             }
             &:last-child {
-              border-bottom: 0 solid #ddd;
+              border-bottom: 0 solid #9f9fa0;
             }
             .week {
               margin-top: 0.4rem;
@@ -371,8 +453,16 @@ export default {
               line-height: 0.8rem;
             }
           }
-          .keepInfo-active {
+          .keepInfo-normal {
+            background: #cce198;
+            color: #36ae4a;
+          }
+          .keepInfo-leave {
             background: #facc88;
+            color: #eb5a28;
+          }
+          .keepInfo-kuangke {
+            background: #e71b23;
           }
           .item-header {
             text-align: center;

@@ -2,7 +2,7 @@
  * @Author: Alex chenzeyongjsj@163.com 
  * @Date: 2018-03-05 16:43:42 
  * @Last Modified by: Alex chenzeyongjsj@163.com
- * @Last Modified time: 2018-03-22 09:46:51
+ * @Last Modified time: 2018-03-22 15:01:43
  */
 
 <template>
@@ -21,7 +21,7 @@
     <!-- 考勤信息 -->
     <div class="attendance">
       <div class="title">
-        <p>考勤信息</p>
+        <p>提醒事项</p>
       </div>
       <div class="container">
         <p class="left">
@@ -76,43 +76,29 @@ export default {
         {
           img_src: "./static/img/icon1.png",
           img_class: "menu-icon",
-          menu_title: "我的课表",
+          menu_title: "学期课表",
           menu_link: "/pages/myTimetable",
           new_message: false
         },
         {
           img_src: "./static/img/icon2.png",
           img_class: "menu-icon icon2",
-          menu_title: "学生考勤",
-          menu_link: "/pages/keepTime/keepTime",
+          menu_title: "考勤查询",
+          menu_link: "/pages/keepTime",
           new_message: false
         },
         {
           img_src: "./static/img/icon3.png",
           img_class: "menu-icon icon3",
-          menu_title: "学生请假",
+          menu_title: "我要请假",
           menu_link: "/pages/studentsLeave/studentsLeave",
           new_message: false
         },
         {
           img_src: "./static/img/icon4.png",
           img_class: "menu-icon",
-          menu_title: "教室预约",
+          menu_title: "我要申诉",
           menu_link: "/pages/classroom/classroom",
-          new_message: false
-        },
-        {
-          img_src: "./static/img/icon5.png",
-          img_class: "menu-icon",
-          menu_title: "我要调课",
-          menu_link: "/pages/adjustmentClass/adjustmentClass",
-          new_message: false
-        },
-        {
-          img_src: "./static/img/icon6.png",
-          img_class: "menu-icon",
-          menu_title: "我要并课",
-          menu_link: "/pages/andClass/andClass",
           new_message: false
         },
         {
@@ -127,43 +113,29 @@ export default {
         {
           img_src: "./static/img/icon1-1.png",
           img_class: "menu-icon",
-          menu_title: "我的课表",
+          menu_title: "学期课表",
           menu_link: "/pages/myTimetable",
           new_message: false
         },
         {
           img_src: "./static/img/icon2-2.png",
           img_class: "menu-icon icon2",
-          menu_title: "学生考勤",
-          menu_link: "/pages/keepTime/keepTime",
+          menu_title: "考勤查询",
+          menu_link: "/pages/keepTime",
           new_message: false
         },
         {
           img_src: "./static/img/icon3-3.png",
           img_class: "menu-icon icon3",
-          menu_title: "学生请假",
+          menu_title: "我要请假",
           menu_link: "/pages/studentsLeave/studentsLeave",
           new_message: false
         },
         {
           img_src: "./static/img/icon4-4.png",
           img_class: "menu-icon",
-          menu_title: "教室预约",
+          menu_title: "我要申诉",
           menu_link: "/pages/classroom/classroom",
-          new_message: false
-        },
-        {
-          img_src: "./static/img/icon5-5.png",
-          img_class: "menu-icon",
-          menu_title: "我要调课",
-          menu_link: "/pages/adjustmentClass/adjustmentClass",
-          new_message: false
-        },
-        {
-          img_src: "./static/img/icon6-6.png",
-          img_class: "menu-icon",
-          menu_title: "我要并课",
-          menu_link: "/pages/andClass/andClass",
           new_message: false
         },
         {

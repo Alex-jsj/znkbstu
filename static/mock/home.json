@@ -1,10 +1,10 @@
 {
     "user_id": 1,
-    "name": "陈某某",
-    "department": "工业设计系",
+    "name": "李设计",
+    "department": "工业设计系14级设计班",
     "job_number": 147046224,
-    "leave": 3,
-    "absenteeism": 1,
-    "all_class": 60,
+    "leave": 5,
+    "absenteeism": 2,
+    "all_class": 20,
     "new_message": 3
 }

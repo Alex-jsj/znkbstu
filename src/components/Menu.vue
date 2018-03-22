@@ -2,7 +2,7 @@
  * @Author: Alex chenzeyongjsj@163.com 
  * @Date: 2018-03-05 16:43:42 
  * @Last Modified by: Alex chenzeyongjsj@163.com
- * @Last Modified time: 2018-03-14 10:42:09
+ * @Last Modified time: 2018-03-22 15:02:02
  */
 
 <template>
@@ -41,7 +41,7 @@ export default {
         {
           title: "考勤",
           icon: "icon-kaoqin",
-          link: "/pages/keepTime/keepTime",
+          link: "/pages/keepTime",
           active: false
         },
         {
@@ -51,14 +51,14 @@ export default {
           active: false
         },
         {
-          title: "通知",
+          title: "申诉",
           icon: "icon-tongzhi",
           link: "/pages/message/messageNotification",
           active: false
         },
         {
-          title: "更多",
-          icon: "icon-gengduo",
+          title: "通知",
+          icon: "icon-tongzhi",
           link: "/pages/gengduo",
           active: false
         }
