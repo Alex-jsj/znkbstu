@@ -2,7 +2,7 @@
  * @Author: Alex chenzeyongjsj@163.com 
  * @Date: 2018-03-05 16:43:42 
  * @Last Modified by: Alex chenzeyongjsj@163.com
- * @Last Modified time: 2018-03-22 16:31:52
+ * @Last Modified time: 2018-03-23 15:51:50
  */
 
 <template>
@@ -53,7 +53,7 @@ export default {
         {
           title: "申诉",
           icon: "icon-tongzhi",
-          link: "/pages/message/messageNotification",
+          link: "/pages/appeal/appeal",
           active: false
         },
         {

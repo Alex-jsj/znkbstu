@@ -2,7 +2,7 @@
  * @Author: Alex chenzeyongjsj@163.com 
  * @Date: 2018-03-05 16:43:42 
  * @Last Modified by: Alex chenzeyongjsj@163.com
- * @Last Modified time: 2018-03-22 16:30:43
+ * @Last Modified time: 2018-03-23 15:51:41
  */
 
 <template>
@@ -98,7 +98,7 @@ export default {
           img_src: "./static/img/icon4.png",
           img_class: "menu-icon",
           menu_title: "我要申诉",
-          menu_link: "/pages/classroom/classroom",
+          menu_link: "/pages/appeal/appeal",
           new_message: false
         },
         {
@@ -135,7 +135,7 @@ export default {
           img_src: "./static/img/icon4-4.png",
           img_class: "menu-icon",
           menu_title: "我要申诉",
-          menu_link: "/pages/classroom/classroom",
+          menu_link: "/pages/appeal/appeal",
           new_message: false
         },
         {
