@@ -2,7 +2,7 @@
  * @Author: Alex chenzeyongjsj@163.com 
  * @Date: 2018-02-28 16:43:16 
  * @Last Modified by: Alex chenzeyongjsj@163.com
- * @Last Modified time: 2018-03-13 15:12:04
+ * @Last Modified time: 2018-03-23 15:17:46
  */
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
@@ -20,10 +20,18 @@ import icon_css from './assets/iconfont/iconfont.css' //阿里巴巴图标库
 import {
     InfiniteScroll,
     DatetimePicker,
+    Radio
 } from "mint-ui";
 Vue.use(InfiniteScroll);
 Vue.component(DatetimePicker.name, DatetimePicker);
+Vue.component(Radio.name, Radio);
 import 'mint-ui/lib/style.css'
+//引入element ui upload组件
+import {
+    Upload
+} from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
+Vue.component(Upload.name, Upload);
 
 
 Vue.config.productionTip = false

@@ -2,20 +2,15 @@
  * @Author: Alex chenzeyongjsj@163.com 
  * @Date: 2018-03-22 16:47:22 
  * @Last Modified by: Alex chenzeyongjsj@163.com
- * @Last Modified time: 2018-03-23 15:27:22
+ * @Last Modified time: 2018-03-23 15:31:50
  */
 
 
 
 <template>
-  <div class="leaveApply">
+  <div class="leaveRepair">
     <!-- form -->
     <div class="form">
-      <div class="form-item">
-        <span class="item-title float-left">请假类型：</span>
-        <mt-radio v-model="leaveType" :options="['事假', '病假']">
-        </mt-radio>
-      </div>
       <div class="form-item">
         <span class="item-title float-left">开始时间：</span>
         <!-- datepicker -->
@@ -42,7 +37,7 @@
         </div>
       </div>
       <div class="form-item">
-        <span class="item-title float-left">请假事由：</span>
+        <span class="item-title float-left">补假事由：</span>
         <div class="item-container3 float-right">
           <textarea class="textarea" rows="5" v-model="remarks"></textarea>
         </div>
@@ -69,7 +64,7 @@
 <script>
 import { MessageBox, Toast } from "mint-ui";
 export default {
-  name: "leaveApply",
+  name: "leaveRepair",
   data() {
     return {
       fileList2: [],
@@ -77,7 +72,6 @@ export default {
       userToken: "",
       student_num: "",
       imageUrl: "",
-      leaveType: "事假",
       //
       myDate: "", //己方时间
       toDate: "", //对方时间
@@ -214,7 +208,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="less">
-.leaveApply {
+.leaveRepair {
   width: 100%;
   position: relative;
   padding-top: 1.75rem;

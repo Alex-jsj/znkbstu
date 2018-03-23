@@ -2,7 +2,7 @@
  * @Author: Alex chenzeyongjsj@163.com 
  * @Date: 2018-02-28 16:42:54 
  * @Last Modified by: Alex chenzeyongjsj@163.com
- * @Last Modified time: 2018-03-13 17:25:55
+ * @Last Modified time: 2018-03-23 15:26:52
  */
 
 html,
@@ -105,4 +105,28 @@ a {
 .mint-msgbox-confirm {
     font-size: 0.65rem;
     letter-spacing: 0.1rem;
+}
+
+.avatar-uploader .el-upload-list {
+    width: 6rem;
+    margin-left: 4.6rem;
+}
+
+.avatar-uploader .el-upload-list__item .el-icon-close {
+    width: 6rem;
+    display: block;
+    right: 0;
+    opacity: 0;
+}
+
+.mint-radiolist .mint-cell,
+.mint-radiolist .mint-cell:last-child {
+    min-height: 0;
+    width: 5rem;
+    height: 1.25rem;
+    margin-top: 0.5rem;
+    background-image: -webkit-linear-gradient(bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0) 50%, transparent 50%);
+    background-image: -webkit-gradient(linear, left bottom, left top, from(rgba(0, 0, 0, 0)), color-stop(50%, rgba(0, 0, 0, 0)), color-stop(50%, transparent));
+    background-image: linear-gradient(0deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0) 50%, transparent 50%);
+    float: left;
 }

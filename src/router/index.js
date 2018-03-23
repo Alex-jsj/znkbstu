@@ -2,7 +2,7 @@
  * @Author: Alex chenzeyongjsj@163.com 
  * @Date: 2018-02-28 16:43:09 
  * @Last Modified by: Alex chenzeyongjsj@163.com
- * @Last Modified time: 2018-03-22 16:45:26
+ * @Last Modified time: 2018-03-23 15:30:33
  */
 import Vue from 'vue'
 import Router from 'vue-router'
@@ -19,6 +19,7 @@ import reservationRecord from '@/pages/classroom/reservationRecord' //预约记�
 import leave from '@/pages/studentsLeave/leave' //请假
 import leaveList from '@/pages/studentsLeave/leaveList' //请假记录
 import leaveApply from '@/pages/studentsLeave/leaveApply' //请假
+import leaveRepair from '@/pages/studentsLeave/leaveRepair' //补假
 import leaveInfo from '@/pages/studentsLeave/leaveInfo' //请假详情页
 import andClass from '@/pages/andClass/andClass' //并课申请
 import andClassApply from '@/pages/andClass/andClassApply' //并课申请
@@ -75,6 +76,10 @@ export default new Router({
                 {
                     path: 'leaveApply',
                     component: leaveApply
+                },
+                {
+                    path: 'leaveRepair',
+                    component: leaveRepair
                 },
             ]
         },
