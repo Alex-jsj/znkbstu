@@ -41,7 +41,7 @@ export default {
   name: "messageNotification",
   data() {
     return {
-      linkActive: 4,
+      linkActive: 5,
       message_list: [],
       loading: false
     };

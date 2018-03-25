@@ -59,7 +59,7 @@ export default {
         {
           title: "通知",
           icon: "icon-tongzhi",
-          link: "/pages/gengduo",
+          link: "/pages/message/messageNotification",
           active: false
         }
       ]

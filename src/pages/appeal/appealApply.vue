@@ -14,7 +14,14 @@
       <div class="form-item">
         <span class="item-title float-left">申诉课程：</span>
         <div class="item-container float-right">
-          <input type="text" class="tec" v-model="teacher">
+          <!-- picker -->
+          <div class="picker float-right">
+            <select class="picker-select" v-model="classs">
+              <option v-for="item in classList" :key="item.id" :value="item">{{item.title}}</option>
+            </select>
+            <span>{{classs.title}}</span>
+            <i class="iconfont icon-down"></i>
+          </div>
         </div>
       </div>
       <div class="form-item">
@@ -26,6 +33,19 @@
         </div>
         <mt-datetime-picker ref="startPicker" type="date" :startDate="nowDate" @confirm="handleChange">
         </mt-datetime-picker>
+      </div>
+      <div class="form-item">
+        <span class="item-title float-left">申诉类型：</span>
+        <div class="item-container float-right">
+          <!-- picker -->
+          <div class="picker float-right">
+            <select class="picker-select" v-model="appealType">
+              <option v-for="item in appealTypeList" :key="item.id" :value="item">{{item.title}}</option>
+            </select>
+            <span>{{appealType.title}}</span>
+            <i class="iconfont icon-down"></i>
+          </div>
+        </div>
       </div>
       <div class="form-item">
         <span class="item-title float-left">申诉理由：</span>
@@ -63,14 +83,42 @@ export default {
       userToken: "",
       student_num: "",
       imageUrl: "",
-      leaveType: "事假",
       //
       myDate: "", //己方时间
-      toDate: "", //对方时间
-      teacher: "", //教师
+      classs: {
+        title: "马克思主义哲学",
+        value: 0
+      },
+      classList: [
+        {
+          title: "马克思主义哲学",
+          value: 0
+        },
+        {
+          title: "图形设计",
+          value: 1
+        },
+        {
+          title: "CAD",
+          value: 2
+        }
+      ],
+      appealType: {
+        title: "事假",
+        value: 0
+      },
+      appealTypeList: [
+        {
+          title: "事假",
+          value: 0
+        },
+        {
+          title: "病假",
+          value: 1
+        }
+      ],
       remarks: "", //备注
       nowDate: new Date(), //最小时间
-      nowDate2: new Date(), //最小时间
       submit_btn: true //提交成功之后关闭提交按钮
     };
   },
@@ -247,6 +295,14 @@ export default {
           right: 0.4rem;
           transform: translateY(-50%);
           font-size: 0.6rem;
+        }
+        .picker {
+          width: 100%;
+          height: 1.25rem;
+          background: #fff;
+          font-size: 0.6rem;
+          color: #808080;
+          line-height: 1.25rem;
         }
         .picker-select {
           width: 100%;

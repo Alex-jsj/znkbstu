@@ -36,7 +36,7 @@ export default {
   name: "messageInfo",
   data() {
     return {
-      linkActive: 4, //菜单定位
+      linkActive: 5, //菜单定位
       messageInfo: {}
     };
   },

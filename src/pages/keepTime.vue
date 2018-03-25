@@ -20,13 +20,6 @@
         <span class="float-left week-simulation">{{week.title}}</span>
         <i class="float-left iconfont icon-down"></i>
       </div>
-      <div class="float-left width-3">
-        <select class="class-picker" v-model="class_filter" @change="classChange()">
-          <option v-for="item in filterList.classList" :key="item.id" :value="item">{{item.title}}</option>
-        </select>
-        <span class="float-left class-simulation">{{class_filter.title}}</span>
-        <i class="float-left iconfont icon-down"></i>
-      </div>
     </div>
     <!-- 课表 -->
     <div class="timetable">
@@ -211,6 +204,7 @@ export default {
       width: 7.25rem;
       height: 100%;
       text-align: center;
+      margin-left: 2.5rem;
       span {
         color: #fff;
         font-size: 0.6rem;
@@ -241,35 +235,6 @@ export default {
         color: #fff;
         line-height: 1.75rem;
         margin-left: 0.2rem;
-      }
-    }
-    .width-3 {
-      width: 5rem;
-      height: 100%;
-      position: relative;
-      .class-picker {
-        width: 100%;
-        height: 100%;
-        opacity: 0;
-        position: absolute;
-        top: 0;
-        left: 0;
-        z-index: 1;
-      }
-      .class-simulation {
-        max-width: 3.2rem;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        color: #fff;
-        font-size: 0.6rem;
-        white-space: nowrap;
-        line-height: 1.75rem;
-        margin-left: 0.5rem;
-      }
-      .icon-down {
-        line-height: 1.75rem;
-        margin-left: 0.2rem;
-        color: #fff;
       }
     }
   }
