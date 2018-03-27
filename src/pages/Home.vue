@@ -2,7 +2,7 @@
  * @Author: Alex chenzeyongjsj@163.com 
  * @Date: 2018-03-05 16:43:42 
  * @Last Modified by: Alex chenzeyongjsj@163.com
- * @Last Modified time: 2018-03-23 15:51:41
+ * @Last Modified time: 2018-03-26 17:20:01
  */
 
 <template>
@@ -15,8 +15,8 @@
         </router-link>
       </div>
       <p class="name">{{user_info.name}}</p>
-      <p class="department">{{user_info.department}}</p>
-      <p class="job_number">{{user_info.job_number}}</p>
+      <p class="department">{{user_info.faculty}} {{user_info.grade}}</p>
+      <p class="job_number">{{user_info.student_num}}</p>
     </div>
     <!-- 考勤信息 -->
     <div class="attendance">
@@ -26,12 +26,12 @@
       <div class="container">
         <p class="left">
           <span class="text1 float-left">请假：</span>
-          <span class="text2 float-left">{{user_info.leave}}</span>
+          <span class="text2 float-left">{{user_info.request}}</span>
           <span class="text1 float-left">次</span>
         </p>
         <p class="middle">
           <span class="text1 float-left">旷课：</span>
-          <span class="text2 float-left">{{user_info.absenteeism}}</span>
+          <span class="text2 float-left">{{user_info.truant}}</span>
           <span class="text1 float-left">节</span>
         </p>
         <p class="right">
@@ -47,7 +47,7 @@
           <router-link :to="item.menu_link">
             <img :src="item.img_src" :class="item.img_class">
             <p class="menu-title">{{item.menu_title}}</p>
-            <p class="prompt" v-if="item.new_message">{{message}}</p>
+            <p class="prompt" v-if="item.information">{{message}}</p>
           </router-link>
         </li>
       </ul>
@@ -56,7 +56,7 @@
           <router-link :to="item.menu_link">
             <img :src="item.img_src" :class="item.img_class">
             <p class="menu-title">{{item.menu_title}}</p>
-            <p class="prompt" v-if="item.new_message">{{message}}</p>
+            <p class="prompt" v-if="item.information">{{message}}</p>
           </router-link>
         </li>
       </ul>
@@ -64,6 +64,7 @@
   </div>
 </template>
 <script>
+import { Toast } from "mint-ui";
 export default {
   name: "Home",
   data() {
@@ -78,35 +79,35 @@ export default {
           img_class: "menu-icon",
           menu_title: "学期课表",
           menu_link: "/pages/myTimetable",
-          new_message: false
+          information: false
         },
         {
           img_src: "./static/img/icon2.png",
           img_class: "menu-icon icon2",
           menu_title: "考勤查询",
           menu_link: "/pages/keepTime",
-          new_message: false
+          information: false
         },
         {
           img_src: "./static/img/icon3.png",
           img_class: "menu-icon icon3",
           menu_title: "我要请假",
           menu_link: "/pages/studentsLeave/leave",
-          new_message: false
+          information: false
         },
         {
           img_src: "./static/img/icon4.png",
           img_class: "menu-icon",
           menu_title: "我要申诉",
           menu_link: "/pages/appeal/appeal",
-          new_message: false
+          information: false
         },
         {
           img_src: "./static/img/icon7.png",
           img_class: "menu-icon",
           menu_title: "消息通知",
           menu_link: "/pages/message/messageNotification",
-          new_message: true
+          information: true
         }
       ],
       menu_bad: [
@@ -115,35 +116,35 @@ export default {
           img_class: "menu-icon",
           menu_title: "学期课表",
           menu_link: "/pages/myTimetable",
-          new_message: false
+          information: false
         },
         {
           img_src: "./static/img/icon2-2.png",
           img_class: "menu-icon icon2",
           menu_title: "考勤查询",
           menu_link: "/pages/keepTime",
-          new_message: false
+          information: false
         },
         {
           img_src: "./static/img/icon3-3.png",
           img_class: "menu-icon icon3",
           menu_title: "我要请假",
           menu_link: "/pages/studentsLeave/leave",
-          new_message: false
+          information: false
         },
         {
           img_src: "./static/img/icon4-4.png",
           img_class: "menu-icon",
           menu_title: "我要申诉",
           menu_link: "/pages/appeal/appeal",
-          new_message: false
+          information: false
         },
         {
           img_src: "./static/img/icon7-7.png",
           img_class: "menu-icon",
           menu_title: "消息通知",
           menu_link: "/pages/message/messageNotification",
-          new_message: true
+          information: true
         }
       ]
     };
@@ -156,44 +157,91 @@ export default {
       //跳转到登录页
       this.$router.push({ path: "/pages/Login" });
     } else {
-      let cw =
-        window.innerWidth ||
-        document.documentElement.clientWidth ||
-        document.body.clientWidth;
-      this.$http
-        .get("./static/mock/home.json")
+      let that = this;
+      //进页面先判断token是否过期
+      that
+        .$http({
+          method: "get",
+          url: "/Home/Verify/index?token=" + localStorage.getItem("userToken")
+        })
         .then(response => {
-          this.user_info = response.data;
-          //消息通知
-          if (this.user_info.new_message > 99) {
-            this.message = "99+";
-          } else if (this.user_info.new_message == 0) {
-            this.clear_message(this.menu_good);
-            this.clear_message(this.menu_bad);
+          //登录成功之后获取用户数据
+          if (response.data.verify) {
+            that
+              .$http({
+                method: "post",
+                url: "/Home/Index/index",
+                data: {
+                  student_num: localStorage.getItem("student_num")
+                },
+                headers: {
+                  "Content-Type": "application/x-www-form-urlencoded"
+                },
+                //格式化
+                transformRequest: [
+                  function(data) {
+                    let ret = "";
+                    for (let it in data) {
+                      ret +=
+                        encodeURIComponent(it) +
+                        "=" +
+                        encodeURIComponent(data[it]) +
+                        "&";
+                    }
+                    return ret;
+                  }
+                ]
+              })
+              .then(response => {
+                that.user_info = response.data;
+                //消息通知
+                if (that.user_info.information > 99) {
+                  that.message = "99+";
+                } else if (that.user_info.information == 0) {
+                  that.clear_message(that.menu_good);
+                  that.clear_message(that.menu_bad);
+                } else {
+                  that.message = that.user_info.information;
+                }
+                //出勤率
+                if (response.data.request) {
+                  that.attendance = Math.round(
+                    (1 -
+                      (response.data.request + response.data.truant) /
+                        response.data.count) *
+                      100
+                  );
+                }
+                let time_canvas = document.getElementById("attendance");
+                let canvas_color;
+                //根据出勤率更换首页风格
+                if (that.attendance < 90) {
+                  that.bg_choose = false;
+                  canvas_color = "#cb121b";
+                } else {
+                  that.bg_choose = true;
+                  canvas_color = "#86c03f";
+                }
+                //出勤率进度条方法
+                that.drawMain(
+                  time_canvas,
+                  that.attendance,
+                  canvas_color,
+                  "#c8c8c8"
+                );
+              })
+              .catch(error => {
+                console.log(error);
+              });
           } else {
-            this.message = this.user_info.new_message;
+            alert("登录已失效，请重新登录！");
+            localStorage.removeItem("userToken");
+            localStorage.removeItem("student_num");
+            this.$router.push({ path: "/pages/Login" });
           }
-          //出勤率
-          this.attendance = Math.round(
-            (1 -
-              (response.data.leave + response.data.absenteeism) /
-                response.data.all_class) *
-              100
-          );
-          let time_canvas = document.getElementById("attendance");
-          let canvas_color;
-          //根据出勤率更换首页风格
-          if (this.attendance < 90) {
-            this.bg_choose = false;
-            canvas_color = "#cb121b";
-          } else {
-            this.bg_choose = true;
-            canvas_color = "#86c03f";
-          }
-          //出勤率进度条
-          this.drawMain(time_canvas, this.attendance, canvas_color, "#c8c8c8");
         })
         .catch(error => {
+          let instance = Toast("网络错误！");
           console.log(error);
         });
     }
@@ -276,7 +324,7 @@ export default {
     //清除消息通知小红点
     clear_message: function(obj) {
       for (let i = 0; i < obj.length; i++) {
-        obj[i].new_message = false;
+        obj[i].information = false;
       }
     }
   }

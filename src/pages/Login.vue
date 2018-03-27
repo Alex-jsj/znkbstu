@@ -2,7 +2,7 @@
  * @Author: Alex chenzeyongjsj@163.com 
  * @Date: 2018-02-28 16:42:39 
  * @Last Modified by: Alex chenzeyongjsj@163.com
- * @Last Modified time: 2018-03-14 14:58:49
+ * @Last Modified time: 2018-03-26 16:04:47
  */
 <template>
   <div class="login">
@@ -103,7 +103,7 @@ export default {
         //验证通过
         this.$http({
           method: "post",
-          url: "/Home/Index/login",
+          url: "/Home/Login/login",
           data: {
             student_num: this.user,
             password: this.password
@@ -127,7 +127,6 @@ export default {
           ]
         })
           .then(response => {
-            console.log(response.data)
             if (response.data.code == 1) {
               //防止重复提交
               that.canSubmit = false;
@@ -147,7 +146,7 @@ export default {
             }
           })
           .catch(error => {
-            MessageBox("提示", "登陆失败！");
+            MessageBox("提示", "服务器错误！");
             console.log(error);
           });
       } else {

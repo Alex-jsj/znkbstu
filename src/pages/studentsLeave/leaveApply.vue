@@ -2,7 +2,7 @@
  * @Author: Alex chenzeyongjsj@163.com 
  * @Date: 2018-03-22 16:47:22 
  * @Last Modified by: Alex chenzeyongjsj@163.com
- * @Last Modified time: 2018-03-23 15:27:22
+ * @Last Modified time: 2018-03-26 18:49:40
  */
 
 
@@ -50,7 +50,7 @@
       <div class="form-item">
         <span class="item-title float-left">上传附件：</span>
         <div class="item-container3 float-right">
-          <el-upload class="avatar-uploader" action="/Home/Index/upload" :limit="1" :show-file-list="true" :on-remove="handleRemove" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
+          <el-upload name="accessory" class="avatar-uploader" action="/Home/Index/image_upload" :limit="1" :show-file-list="true" :on-remove="handleRemove" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
             <div class="avatar">
               <img v-if="imageUrl" :src="imageUrl">
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
@@ -83,6 +83,7 @@ export default {
       toDate: "", //对方时间
       teacher: "", //教师
       remarks: "", //备注
+      fileUrl: "", //备注
       nowDate: new Date(), //最小时间
       nowDate2: new Date(), //最小时间
       submit_btn: true //提交成功之后关闭提交按钮
@@ -134,50 +135,78 @@ export default {
     },
     //表单提交
     submit: function() {
-      var that = this;
+      let that = this;
       if (that.teacher && that.remarks && that.imageUrl) {
         //验证通过
+        //先判断token是否过期
         that
           .$http({
             method: "get",
-            url: "./static/mock/login.json",
-            data: {},
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded"
-            },
-            //格式化
-            transformRequest: [
-              function(data) {
-                let ret = "";
-                for (let it in data) {
-                  ret +=
-                    encodeURIComponent(it) +
-                    "=" +
-                    encodeURIComponent(data[it]) +
-                    "&";
-                }
-                return ret;
-              }
-            ]
+            url: "/Home/Verify/index?token=" + localStorage.getItem("userToken")
           })
           .then(response => {
-            let instance = Toast("提交成功");
-            //提交成功之后关闭提交按钮并跳转到预约列表页
-            that.submit_btn = false;
-            setTimeout(() => {
-              instance.close();
-              that.$router.push({
-                path: "/pages/studentsLeave/leave/leaveList"
-              });
-            }, 500);
+            //登录成功之后获取用户数据
+            if (response.data.verify) {
+              that
+                .$http({
+                  method: "post",
+                  url: "/Home/Index/request_submit",
+                  data: {
+                    accessory: that.fileUrl,
+                    request_type: that.leaveType,
+                    start_time: that.myDate,
+                    end_time: that.toDate,
+                    remarks: that.remarks,
+                    curriculum: that.teacher
+                  },
+                  headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                  },
+                  //格式化
+                  transformRequest: [
+                    function(data) {
+                      let ret = "";
+                      for (let it in data) {
+                        ret +=
+                          encodeURIComponent(it) +
+                          "=" +
+                          encodeURIComponent(data[it]) +
+                          "&";
+                      }
+                      return ret;
+                    }
+                  ]
+                })
+                .then(response => {
+                  console.log(response.data);
+                  let instance = Toast("提交成功");
+                  //提交成功之后关闭提交按钮并跳转到预约列表页
+                  that.submit_btn = false;
+                  setTimeout(() => {
+                    instance.close();
+                    that.$router.push({
+                      //path: "/pages/studentsLeave/leave/leaveList"
+                    });
+                  }, 500);
+                })
+                .catch(error => {
+                  let instance = Toast("网络错误");
+                  setTimeout(() => {
+                    instance.close();
+                  }, 1000);
+                  //提交失败则重新开放登录按钮
+                  that.submit_btn = true;
+                  console.log(error);
+                });
+            } else {
+              alert("登录已失效，请重新登录！");
+              localStorage.removeItem("userToken");
+              localStorage.removeItem("student_num");
+              this.$router.push({ path: "/pages/Login" });
+            }
           })
           .catch(error => {
-            let instance = Toast("提交失败");
-            setTimeout(() => {
-              instance.close();
-            }, 1000);
-            //提交失败则重新开放登录按钮
-            that.submit_btn = true;
+            let instance = Toast("网络错误！");
             console.log(error);
           });
       } else {
@@ -187,10 +216,7 @@ export default {
     //上传成功的钩子
     handleAvatarSuccess(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw);
-      //console.log(file.name)
-      //console.log(file.url)
-      //console.log(file.raw.type);
-      console.log(file);
+      this.fileUrl = res.accessory[0];
     },
     //上传之前的钩子
     beforeAvatarUpload(file) {
