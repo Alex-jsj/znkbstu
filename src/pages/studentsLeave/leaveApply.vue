@@ -36,9 +36,22 @@
         </mt-datetime-picker>
       </div>
       <div class="form-item">
-        <span class="item-title float-left">上课教师：</span>
-        <div class="item-container float-right">
-          <input type="text" class="tec" v-model="teacher">
+        <span class="item-title float-left">课程/教师：</span>
+        <div class="item-container item-container2 float-right">
+          <input type="text" class="tec-2 float-left">
+          <span class="line">/</span>
+          <input type="text" class="tec-2">
+        </div>
+        <div class="add float-right">
+          <div class="item-container item-container2 item-container2-2 float-left">
+            <input type="text" class="tec-2 float-left">
+            <span class="line">/</span>
+            <input type="text" class="tec-2 float-right">
+          </div>
+          <i class="iconfont icon-bohui float-right"></i>
+        </div>
+        <div class="addTec-Class float-right">
+          <span>+</span>
         </div>
       </div>
       <div class="form-item">
@@ -82,6 +95,7 @@ export default {
       myDate: "", //己方时间
       toDate: "", //对方时间
       teacher: "", //教师
+      curriculum: "", //课程
       remarks: "", //备注
       fileUrl: "", //备注
       nowDate: new Date(), //最小时间
@@ -136,6 +150,9 @@ export default {
     //表单提交
     submit: function() {
       let that = this;
+      console.log(
+        document.getElementsByClassName("item-container2")[0].children[0].value
+      );
       if (that.teacher && that.remarks && that.imageUrl) {
         //验证通过
         //先判断token是否过期
@@ -268,7 +285,7 @@ export default {
         line-height: 1.75rem;
       }
       .item-container {
-        width: 10.4rem;
+        width: 10rem;
         height: 1.25rem;
         border: 1px solid #787878;
         border-radius: 0.2rem;
@@ -301,8 +318,57 @@ export default {
           height: 100%;
         }
       }
+      .item-container2 {
+        padding-right: 0.4rem;
+        .tec-2 {
+          width: 4.1rem;
+          height: 100%;
+        }
+        .line {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+        }
+      }
+      .add {
+        width: 10rem;
+        height: 1.25rem;
+        position: relative;
+        margin-top: 0.26rem;
+        .item-container2-2 {
+          width: 9rem;
+          margin-top: 0;
+          .tec-2 {
+            width: 3.8rem;
+          }
+        }
+        .icon-bohui {
+          font-size: 0.8rem;
+          position: absolute;
+          top: 50%;
+          right: 0;
+          transform: translateY(-50%);
+          color: #aaa;
+        }
+      }
       .item-container3 {
-        width: 10.4rem;
+        width: 10rem;
+      }
+      .addTec-Class {
+        width: 10rem;
+        height: 1.25rem;
+        border: 1px dashed #ccc;
+        margin-top: 0.2rem;
+        border-radius: 0.2rem;
+        position: relative;
+        > span {
+          color: #aaa;
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+        }
       }
       .textarea {
         width: 100%;
