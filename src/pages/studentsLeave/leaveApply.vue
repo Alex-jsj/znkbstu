@@ -195,7 +195,7 @@ export default {
                       request_type: l_type,
                       start_time: that.myDate,
                       end_time: that.toDate,
-                      remarks: that.remarks,
+                      reason: that.remarks,
                       curriculum: that.tec_class
                     },
                     headers: {

@@ -13,34 +13,36 @@
     <div class="container">
       <!-- date -->
       <div class="date">
-        <span class="float-left">{{leaveInfo.date}}</span>
+        <span class="float-left">{{leaveInfo.time}}</span>
         <span class="float-left week">{{leaveInfo.week}}</span>
       </div>
       <!-- list -->
       <div class="list">
         <div class="list-item">
           <span class="float-left">请假人员：</span>
-          <span class="float-left">{{leaveInfo.leave_person}}</span>
+          <span class="float-left">{{leaveInfo.name}}</span>
         </div>
         <div class="list-item">
           <span class="float-left">班级：</span>
-          <span class="float-left">{{leaveInfo.class}}</span>
+          <span class="float-left">{{leaveInfo.squad_name}}</span>
         </div>
         <div class="list-item">
           <span class="float-left">请假类型：</span>
-          <span class="float-left">{{leaveInfo.leave_type}}</span>
+          <span class="float-left">{{leaveInfo.type}}</span>
         </div>
         <div class="list-item">
           <span class="float-left">请假时间：</span>
-          <span class="float-left">{{leaveInfo.leave_date}}</span>
+          <span class="float-left">{{leaveInfo.start_time}} 至 {{leaveInfo.end_time}}</span>
         </div>
-        <div class="list-item">
+        <div class="list-item tec">
           <span class="float-left">请假课程：</span>
-          <span class="float-left">{{leaveInfo.classname}}</span>
+          <div class="float-left tec-class">
+            <p v-for="item in leaveInfo.tec_class" :key="item.id">{{item}}</p>
+          </div>
         </div>
         <div class="list-item item-excuse">
           <span class="float-left">请假事由：</span>
-          <div v-html="leaveInfo.excuse_for_leave"></div>
+          <div v-html="leaveInfo.reason" class="remarks"></div>
         </div>
       </div>
       <!-- type -->
@@ -72,37 +74,91 @@ export default {
       //跳转到登录页
       this.$router.push({ path: "/pages/Login" });
     } else {
-      this.$http
-        .get("./static/mock/leaveInfo.json")
+      let that = this;
+      that
+        .$http({
+          method: "get",
+          url: "/Home/Verify/index?token=" + localStorage.getItem("userToken")
+        })
         .then(response => {
-          this.leaveInfo = response.data;
-          //换算星期
-          this.leaveInfo.week = new Date(this.leaveInfo.date).getDay();
-          if (this.leaveInfo.week == 0) {
-            this.leaveInfo.week = "周日";
-          } else if (this.leaveInfo.week == 1) {
-            this.leaveInfo.week = "周一";
-          } else if (this.leaveInfo.week == 2) {
-            this.leaveInfo.week = "周二";
-          } else if (this.leaveInfo.week == 3) {
-            this.leaveInfo.week = "周三";
-          } else if (this.leaveInfo.week == 4) {
-            this.leaveInfo.week = "周四";
-          } else if (this.leaveInfo.week == 5) {
-            this.leaveInfo.week = "周五";
-          } else if (this.leaveInfo.week == 6) {
-            this.leaveInfo.week = "周六";
-          }
-          if (this.leaveInfo.status == 0) {
-            this.leaveInfo.statusClass = "icon-shenhezhong";
-          } else if (this.leaveInfo.status == 1) {
-            this.leaveInfo.statusClass = "icon-shenhetongguo";
-          } else if (this.leaveInfo.status == 2) {
-            this.leaveInfo.statusClass = "icon-yibohui";
+          //登录成功之后获取用户数据
+          if (response.data.verify) {
+            that
+              .$http({
+                method: "post",
+                url: "/Home/Index/request_particulars",
+                data: {
+                  student_num: localStorage.getItem("student_num"),
+                  id: sessionStorage.getItem("leave_id")
+                },
+                headers: {
+                  "Content-Type": "application/x-www-form-urlencoded"
+                },
+                //格式化
+                transformRequest: [
+                  function(data) {
+                    let ret = "";
+                    for (let it in data) {
+                      ret +=
+                        encodeURIComponent(it) +
+                        "=" +
+                        encodeURIComponent(data[it]) +
+                        "&";
+                    }
+                    return ret;
+                  }
+                ]
+              })
+              .then(response => {
+                this.leaveInfo = response.data;
+                //课程/教师
+                this.leaveInfo.tec_class = this.leaveInfo.curriculum.split(",");
+                //换算星期
+                this.leaveInfo.week = new Date(this.leaveInfo.time).getDay();
+                if (this.leaveInfo.week == 0) {
+                  this.leaveInfo.week = "周日";
+                } else if (this.leaveInfo.week == 1) {
+                  this.leaveInfo.week = "周一";
+                } else if (this.leaveInfo.week == 2) {
+                  this.leaveInfo.week = "周二";
+                } else if (this.leaveInfo.week == 3) {
+                  this.leaveInfo.week = "周三";
+                } else if (this.leaveInfo.week == 4) {
+                  this.leaveInfo.week = "周四";
+                } else if (this.leaveInfo.week == 5) {
+                  this.leaveInfo.week = "周五";
+                } else if (this.leaveInfo.week == 6) {
+                  this.leaveInfo.week = "周六";
+                }
+                //请假类型
+                if (this.leaveInfo.request_type == 1) {
+                  this.leaveInfo.type = "事假";
+                } else if (this.leaveInfo.request_type == 2) {
+                  this.leaveInfo.type = "病假";
+                } else if (this.leaveInfo.request_type == 3) {
+                  this.leaveInfo.type = "补假";
+                }
+                //状态
+                if (this.leaveInfo.status == 1) {
+                  this.leaveInfo.statusClass = "icon-shenhezhong";
+                } else if (this.leaveInfo.status == 2) {
+                  this.leaveInfo.statusClass = "icon-shenhetongguo";
+                } else if (this.leaveInfo.status == 3) {
+                  this.leaveInfo.statusClass = "icon-yibohui";
+                }
+              })
+              .catch(error => {
+                alert("网络错误");
+              });
+          } else {
+            alert("登录已失效，请重新登录！");
+            localStorage.removeItem("userToken");
+            localStorage.removeItem("student_num");
+            this.$router.push({ path: "/pages/Login" });
           }
         })
         .catch(error => {
-          console.log(error);
+          alert("网络错误");
         });
     }
   },
@@ -134,6 +190,7 @@ export default {
       }
       .week {
         margin-left: 0.5rem;
+        font-size: 0.65rem;
       }
     }
     .list {
@@ -148,11 +205,31 @@ export default {
         overflow: hidden;
         font-size: 0.6rem;
         color: #666;
-        line-height: 1.9rem;
+        padding-top: 0.51rem;
+        padding-bottom: 0.51rem;
+        // line-height: 1.9rem;
         border-bottom: 1px solid #e5e5e5;
         &:last-child {
           border-bottom: none;
         }
+        .remarks {
+          line-height: 1rem;
+          margin-top: -0.05rem;
+        }
+        .tec-class {
+          width: 9rem;
+          margin-top: -0.3rem;
+          > p {
+            border-bottom: 1px dashed #ddd;
+            padding: 0.3rem 0;
+            &:last-child {
+              border-bottom: none;
+            }
+          }
+        }
+      }
+      .tec {
+        height: auto;
       }
       .item-excuse {
         height: auto;

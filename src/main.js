@@ -20,11 +20,13 @@ import icon_css from './assets/iconfont/iconfont.css' //阿里巴巴图标库
 import {
     InfiniteScroll,
     DatetimePicker,
-    Radio
+    Radio,
+    Spinner
 } from "mint-ui";
 Vue.use(InfiniteScroll);
 Vue.component(DatetimePicker.name, DatetimePicker);
 Vue.component(Radio.name, Radio);
+Vue.component(Spinner.name, Spinner);
 import 'mint-ui/lib/style.css'
 //引入element ui upload组件
 import {

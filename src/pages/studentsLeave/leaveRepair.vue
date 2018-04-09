@@ -180,7 +180,7 @@ export default {
                       request_type: 3,
                       start_time: that.myDate,
                       end_time: that.toDate,
-                      remarks: that.remarks,
+                      reason: that.remarks,
                       curriculum: that.tec_class
                     },
                     headers: {
@@ -207,7 +207,7 @@ export default {
                       setTimeout(() => {
                         instance.close();
                         that.$router.push({
-                          //path: "/pages/studentsLeave/leave/leaveList"
+                          path: "/pages/studentsLeave/leave/leaveList"
                         });
                       }, 500);
                     } else {
