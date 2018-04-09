@@ -2,7 +2,7 @@
  * @Author: Alex chenzeyongjsj@163.com 
  * @Date: 2018-03-22 16:47:22 
  * @Last Modified by: Alex chenzeyongjsj@163.com
- * @Last Modified time: 2018-03-23 15:31:50
+ * @Last Modified time: 2018-03-26 18:49:40
  */
 
 
@@ -30,14 +30,22 @@
         <mt-datetime-picker ref="toPicker" type="date" :startDate="nowDate2" @confirm="handleChange2">
         </mt-datetime-picker>
       </div>
-      <div class="form-item">
-        <span class="item-title float-left">上课教师：</span>
-        <div class="item-container float-right">
-          <input type="text" class="tec" v-model="teacher">
+      <div class="form-item form-add-container">
+        <span class="item-title float-left">课程/教师：</span>
+        <div class="item-container item-container2 float-right">
+          <input type="text" class="tec-2 float-left">
+          <span class="line">/</span>
+          <input type="text" class="tec-2 float-right">
+        </div>
+      </div>
+      <div class="form-item form-add-item">
+        <span class="item-title float-left"></span>
+        <div class="addTec-Class float-right" @click="add_tec_class()">
+          <span>+</span>
         </div>
       </div>
       <div class="form-item">
-        <span class="item-title float-left">补假事由：</span>
+        <span class="item-title float-left">请假事由：</span>
         <div class="item-container3 float-right">
           <textarea class="textarea" rows="5" v-model="remarks"></textarea>
         </div>
@@ -45,7 +53,7 @@
       <div class="form-item">
         <span class="item-title float-left">上传附件：</span>
         <div class="item-container3 float-right">
-          <el-upload class="avatar-uploader" action="/Home/Index/upload" :limit="1" :show-file-list="true" :on-remove="handleRemove" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
+          <el-upload name="accessory" class="avatar-uploader" action="/Home/Index/image_upload" :limit="1" :show-file-list="true" :on-remove="handleRemove" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
             <div class="avatar">
               <img v-if="imageUrl" :src="imageUrl">
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
@@ -75,8 +83,10 @@ export default {
       //
       myDate: "", //己方时间
       toDate: "", //对方时间
-      teacher: "", //教师
+      tec_class_can: false, //课程/教师是否为空
+      tec_class: [],
       remarks: "", //备注
+      fileUrl: "", //备注
       nowDate: new Date(), //最小时间
       nowDate2: new Date(), //最小时间
       submit_btn: true //提交成功之后关闭提交按钮
@@ -128,63 +138,143 @@ export default {
     },
     //表单提交
     submit: function() {
-      var that = this;
-      if (that.teacher && that.remarks && that.imageUrl) {
-        //验证通过
-        that
-          .$http({
-            method: "get",
-            url: "./static/mock/login.json",
-            data: {},
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded"
-            },
-            //格式化
-            transformRequest: [
-              function(data) {
-                let ret = "";
-                for (let it in data) {
-                  ret +=
-                    encodeURIComponent(it) +
-                    "=" +
-                    encodeURIComponent(data[it]) +
-                    "&";
-                }
-                return ret;
-              }
-            ]
-          })
-          .then(response => {
-            let instance = Toast("提交成功");
-            //提交成功之后关闭提交按钮并跳转到预约列表页
-            that.submit_btn = false;
-            setTimeout(() => {
-              instance.close();
-              that.$router.push({
-                path: "/pages/studentsLeave/leave/leaveList"
-              });
-            }, 500);
-          })
-          .catch(error => {
-            let instance = Toast("提交失败");
-            setTimeout(() => {
-              instance.close();
-            }, 1000);
-            //提交失败则重新开放登录按钮
-            that.submit_btn = true;
-            console.log(error);
-          });
-      } else {
-        MessageBox("提示", "请完善信息！");
+      let that = this;
+      //重置数组
+      that.tec_class = [];
+      //课程/教师数组结构
+      let inputList = document.getElementsByClassName("item-container2");
+      that.tec_class_can = true;
+      for (let i = 0; i < inputList.length; i++) {
+        if (inputList[i].children[0].value && inputList[i].children[2].value) {
+          let item =
+            inputList[i].children[0].value +
+            "/" +
+            inputList[i].children[2].value;
+          that.tec_class.push(item);
+        } else {
+          that.tec_class_can = false;
+        }
       }
+      if (that.submit_btn) {
+        //验证通过
+        if (that.tec_class_can && that.remarks && that.imageUrl) {
+          //提交失败则重新开放登录按钮
+          that.submit_btn = true;
+          //先判断token是否过期
+          that
+            .$http({
+              method: "get",
+              url:
+                "/Home/Verify/index?token=" + localStorage.getItem("userToken")
+            })
+            .then(response => {
+              //登录成功之后获取用户数据
+              if (response.data.verify) {
+                that
+                  .$http({
+                    method: "post",
+                    url: "/Home/Index/request_submit",
+                    data: {
+                      student_num: localStorage.getItem("student_num"),
+                      accessory: that.fileUrl,
+                      request_type: 3,
+                      start_time: that.myDate,
+                      end_time: that.toDate,
+                      remarks: that.remarks,
+                      curriculum: that.tec_class
+                    },
+                    headers: {
+                      "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    //格式化
+                    transformRequest: [
+                      function(data) {
+                        let ret = "";
+                        for (let it in data) {
+                          ret +=
+                            encodeURIComponent(it) +
+                            "=" +
+                            encodeURIComponent(data[it]) +
+                            "&";
+                        }
+                        return ret;
+                      }
+                    ]
+                  })
+                  .then(response => {
+                    if (response.data.code == 1) {
+                      let instance = Toast("提交成功");
+                      setTimeout(() => {
+                        instance.close();
+                        that.$router.push({
+                          //path: "/pages/studentsLeave/leave/leaveList"
+                        });
+                      }, 500);
+                    } else {
+                      //提交失败则重新开放登录按钮
+                      that.submit_btn = true;
+                      let instance = Toast("提交失败");
+                      setTimeout(() => {
+                        instance.close();
+                      }, 1000);
+                    }
+                  })
+                  .catch(error => {
+                    let instance = Toast("网络错误");
+                    setTimeout(() => {
+                      instance.close();
+                    }, 1000);
+                    //提交失败则重新开放登录按钮
+                    that.submit_btn = true;
+                  });
+              } else {
+                alert("登录已失效，请重新登录！");
+                localStorage.removeItem("userToken");
+                localStorage.removeItem("student_num");
+                this.$router.push({ path: "/pages/Login" });
+              }
+            })
+            .catch(error => {
+              let instance = Toast("网络错误！");
+            });
+        } else {
+          MessageBox("提示", "请完善信息！");
+        }
+      }
+    },
+    //新增教师/课程输入框
+    add_tec_class: function() {
+      let that = this;
+      let div = document.createElement("div");
+      div.className = "add float-right";
+      let div_1 = document.createElement("div");
+      div_1.className =
+        "item-container item-container2 item-container2-2 float-left";
+      let input_1 = document.createElement("input");
+      input_1.className = "tec-2 float-left";
+      let input_2 = document.createElement("input");
+      input_2.className = "tec-2 float-right";
+      let span = document.createElement("span");
+      span.className = "line";
+      span.innerText = "/";
+      let i = document.createElement("i");
+      i.className = "iconfont icon-bohui float-right";
+      div_1.appendChild(input_1);
+      div_1.appendChild(span);
+      div_1.appendChild(input_2);
+      div.appendChild(div_1);
+      div.appendChild(i);
+      let container = document.getElementsByClassName("form-add-container")[0];
+      container.appendChild(div);
+      //删除当前元素
+      i.onclick = function() {
+        this.parentElement.parentElement.removeChild(this.parentElement);
+      };
     },
     //上传成功的钩子
     handleAvatarSuccess(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw);
-      //console.log(file.name)
-      //console.log(file.url)
-      //console.log(file.raw.type);
-      console.log(file);
+      this.fileUrl = res.accessory[0];
     },
     //上传之前的钩子
     beforeAvatarUpload(file) {
@@ -207,7 +297,7 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="less">
+<style lang="less">
 .leaveRepair {
   width: 100%;
   position: relative;
@@ -236,7 +326,7 @@ export default {
         line-height: 1.75rem;
       }
       .item-container {
-        width: 10.4rem;
+        width: 10rem;
         height: 1.25rem;
         border: 1px solid #787878;
         border-radius: 0.2rem;
@@ -269,8 +359,57 @@ export default {
           height: 100%;
         }
       }
+      .item-container2 {
+        padding-right: 0.4rem;
+        .tec-2 {
+          width: 4.1rem;
+          height: 100%;
+        }
+        .line {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+        }
+      }
+      .add {
+        width: 10rem;
+        height: 1.25rem;
+        position: relative;
+        margin-top: 0.26rem;
+        .item-container2-2 {
+          width: 9rem;
+          margin-top: 0;
+          .tec-2 {
+            width: 3.8rem;
+          }
+        }
+        .icon-bohui {
+          font-size: 0.8rem;
+          position: absolute;
+          top: 50%;
+          right: 0;
+          transform: translateY(-50%);
+          color: #aaa;
+        }
+      }
       .item-container3 {
-        width: 10.4rem;
+        width: 10rem;
+      }
+      .addTec-Class {
+        width: 10rem;
+        height: 1.25rem;
+        border: 1px dashed #ccc;
+        margin-top: 0.2rem;
+        border-radius: 0.2rem;
+        position: relative;
+        > span {
+          color: #aaa;
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+        }
       }
       .textarea {
         width: 100%;
@@ -283,6 +422,9 @@ export default {
         //去除移动版的内阴影
         -webkit-appearance: none;
       }
+    }
+    .form-add-item {
+      margin-top: 0;
     }
     .toItem {
       margin-top: 2rem;
