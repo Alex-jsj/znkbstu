@@ -18,6 +18,7 @@
       <!-- title -->
       <div class="title">
         <!-- <i class="iconfont icon-message float-left" :class="messageInfo.statusClass"></i> -->
+        <i class="iconfont icon-message float-left tongzhi" :class="messageInfo.statusClass"></i>
         <span class="float-left">{{messageInfo.title}}</span>
       </div>
       <!-- content -->
