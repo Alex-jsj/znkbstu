@@ -47,6 +47,8 @@ export default {
   },
   mounted: function() {
     let that = this;
+    //默认关闭下拉加载 覆盖Indicator插件bug
+    that.loading = true;
     //判断登录状态
     if (!localStorage.getItem("userToken")) {
       //跳转到登录页
@@ -108,13 +110,12 @@ export default {
                   }
                 }
                 this.page_loading = false;
+                //打开下拉加载
+                that.loading = false;
                 this.leaveList = response.data;
               })
               .catch(error => {
-                let instance = Toast("网络错误");
-                setTimeout(() => {
-                  instance.close();
-                }, 1000);
+                alert("网络错误");
               });
           } else {
             alert("登录已失效，请重新登录！");
@@ -124,7 +125,7 @@ export default {
           }
         })
         .catch(error => {
-          let instance = Toast("网络错误！");
+          alert("网络错误！");
         });
     }
   },
@@ -155,7 +156,7 @@ export default {
                 data: {
                   student_num: localStorage.getItem("student_num"),
                   currentPage: that.currentPage + 1,
-                  pageSize: 6
+                  pageSize: 10
                 },
                 headers: {
                   "Content-Type": "application/x-www-form-urlencoded"
@@ -208,6 +209,7 @@ export default {
                 }
               })
               .catch(error => {
+                alert("网络错误！");
                 console.log(error);
               });
           } else {
@@ -218,27 +220,8 @@ export default {
           }
         })
         .catch(error => {
-          let instance = Toast("网络错误！");
+          alert("网络错误！");
         });
-      /* this.$http
-        .get("./static/mock/leaveList.json")
-        .then(response => {
-          for (let i = 0; i < response.data.length; i++) {
-            if (response.data[i].statusId == 1) {
-              response.data[i].statusClass = "shenghe";
-            } else if (response.data[i].statusId == 2) {
-              response.data[i].statusClass = "tongguo";
-            } else if (response.data[i].statusId == 3) {
-              response.data[i].statusClass = "bohui";
-            }
-            this.leaveList.push(response.data[i]);
-          }
-          this.loading = false;
-          Indicator.close();
-        })
-        .catch(error => {
-          console.log(error);
-        }); */
     },
     lookInfo(uid) {
       //存储内页id

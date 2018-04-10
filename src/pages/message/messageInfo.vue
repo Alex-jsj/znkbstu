@@ -12,12 +12,12 @@
     <div class="container">
       <!-- date -->
       <p class="date">
-        <span class="float-left">{{messageInfo.date}}</span>
+        <span class="float-left">{{messageInfo.time}}</span>
         <span class="float-left">{{messageInfo.week}}</span>
       </p>
       <!-- title -->
       <div class="title">
-        <i class="iconfont icon-message float-left" :class="messageInfo.statusClass"></i>
+        <!-- <i class="iconfont icon-message float-left" :class="messageInfo.statusClass"></i> -->
         <span class="float-left">{{messageInfo.title}}</span>
       </div>
       <!-- content -->
@@ -51,30 +51,76 @@ export default {
       //跳转到登录页
       this.$router.push({ path: "/pages/Login" });
     } else {
-      this.$http
-        .get("./static/mock/messageInfo.json")
+      let that = this;
+      that
+        .$http({
+          method: "get",
+          url: "/Home/Verify/index?token=" + localStorage.getItem("userToken")
+        })
         .then(response => {
-          this.messageInfo = response.data;
-          //换算星期
-          this.messageInfo.week = new Date(this.messageInfo.date).getDay();
-          if (this.messageInfo.week == 0) {
-            this.messageInfo.week = "周日";
-          } else if (this.messageInfo.week == 1) {
-            this.messageInfo.week = "周一";
-          } else if (this.messageInfo.week == 2) {
-            this.messageInfo.week = "周二";
-          } else if (this.messageInfo.week == 3) {
-            this.messageInfo.week = "周三";
-          } else if (this.messageInfo.week == 4) {
-            this.messageInfo.week = "周四";
-          } else if (this.messageInfo.week == 5) {
-            this.messageInfo.week = "周五";
-          } else if (this.messageInfo.week == 6) {
-            this.messageInfo.week = "周六";
+          //登录成功之后获取用户数据
+          if (response.data.verify) {
+            that
+              .$http({
+                method: "post",
+                url: "/Home/Index/message_particulars",
+                data: {
+                  student_num: localStorage.getItem("student_num"),
+                  id: sessionStorage.getItem("message_id"),
+                  read_status: sessionStorage.getItem("read_status")
+                },
+                headers: {
+                  "Content-Type": "application/x-www-form-urlencoded"
+                },
+                //格式化
+                transformRequest: [
+                  function(data) {
+                    let ret = "";
+                    for (let it in data) {
+                      ret +=
+                        encodeURIComponent(it) +
+                        "=" +
+                        encodeURIComponent(data[it]) +
+                        "&";
+                    }
+                    return ret;
+                  }
+                ]
+              })
+              .then(response => {
+                this.messageInfo = response.data;
+                //换算星期
+                this.messageInfo.week = new Date(
+                  this.messageInfo.time
+                ).getDay();
+                if (this.messageInfo.week == 0) {
+                  this.messageInfo.week = "周日";
+                } else if (this.messageInfo.week == 1) {
+                  this.messageInfo.week = "周一";
+                } else if (this.messageInfo.week == 2) {
+                  this.messageInfo.week = "周二";
+                } else if (this.messageInfo.week == 3) {
+                  this.messageInfo.week = "周三";
+                } else if (this.messageInfo.week == 4) {
+                  this.messageInfo.week = "周四";
+                } else if (this.messageInfo.week == 5) {
+                  this.messageInfo.week = "周五";
+                } else if (this.messageInfo.week == 6) {
+                  this.messageInfo.week = "周六";
+                }
+              })
+              .catch(error => {
+                alert("网络错误");
+              });
+          } else {
+            alert("登录已失效，请重新登录！");
+            localStorage.removeItem("userToken");
+            localStorage.removeItem("student_num");
+            this.$router.push({ path: "/pages/Login" });
           }
         })
         .catch(error => {
-          console.log(error);
+          alert("网络错误");
         });
     }
   },

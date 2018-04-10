@@ -92,23 +92,30 @@ export default {
       tec_class_can: false, //课程/教师是否为空
       tec_class: [],
       remarks: "", //备注
-      fileUrl: "", //备注
+      fileUrl: "", //图片上传成功之后返回的服务器地址
+      file_success: false, //图片上传成功
       nowDate: new Date(), //最小时间
       nowDate2: new Date(), //最小时间
       submit_btn: true //提交成功之后关闭提交按钮
     };
   },
   mounted: function() {
-    let that = this;
-    //设置初始时间
-    let now = new Date();
-    let year = now.getFullYear();
-    let month = now.getMonth() + 1;
-    let day = now.getDate();
-    month < 10 ? (month = "0" + month) : month;
-    day < 10 ? (day = "0" + day) : day;
-    this.myDate = year + "-" + month + "-" + day;
-    this.toDate = year + "-" + month + "-" + day;
+    //判断登录状态
+    if (!localStorage.getItem("userToken")) {
+      //跳转到登录页
+      this.$router.push({ path: "/pages/Login" });
+    } else {
+      let that = this;
+      //设置初始时间
+      let now = new Date();
+      let year = now.getFullYear();
+      let month = now.getMonth() + 1;
+      let day = now.getDate();
+      month < 10 ? (month = "0" + month) : month;
+      day < 10 ? (day = "0" + day) : day;
+      this.myDate = year + "-" + month + "-" + day;
+      this.toDate = year + "-" + month + "-" + day;
+    }
   },
   methods: {
     //打开日期选择器
@@ -172,7 +179,7 @@ export default {
       }
       if (that.submit_btn) {
         //验证通过
-        if (that.tec_class_can && that.remarks && that.imageUrl) {
+        if (that.tec_class_can && that.remarks && that.file_success) {
           //点击提交之后关闭提交按钮
           that.submit_btn = false;
           //先判断token是否过期
@@ -291,6 +298,11 @@ export default {
     handleAvatarSuccess(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw);
       this.fileUrl = res.accessory[0];
+      if (res.accessory[0]) {
+        this.file_success = true;
+      } else {
+        this.file_success = false;
+      }
     },
     //上传之前的钩子
     beforeAvatarUpload(file) {
@@ -307,6 +319,8 @@ export default {
     //文件移除的钩子
     handleRemove(file, fileList) {
       this.imageUrl = "";
+      this.fileUrl = "";
+      this.file_success = false;
     }
   }
 };

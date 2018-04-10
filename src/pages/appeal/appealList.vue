@@ -7,6 +7,7 @@
 
 <template>
   <div class="appealList">
+    <mt-spinner type="triple-bounce" class="loading" :class="{'loading-show':!page_loading}"></mt-spinner>
     <!-- title -->
     <div class="title">
       <span class="float-left width-1">时间</span>
@@ -17,15 +18,16 @@
     <!-- content -->
     <div>
       <ul class="list" v-infinite-scroll="loadMore" infinite-scroll-immediate-check="true" infinite-scroll-disabled="loading" infinite-scroll-distance="0">
-        <li v-for="(item,index) in leaveList" :key="index">
-          <div class="width-1 float-left list-item">{{item.applicationTime}}</div>
+        <li v-for="(item,index) in appealList" :key="index">
+          <div class="width-1 float-left list-item">{{item.time}}</div>
           <div class="width-2 float-left list-item">{{item.type}}</div>
-          <div class="width-3 float-left list-item" :class="item.statusClass">{{item.status}}</div>
+          <div class="width-3 float-left list-item" :class="item.statusClass">{{item.status_text}}</div>
           <div class="width-4 float-left list-item">
-            <router-link to="/pages/appeal/appealInfo" class="info">查看</router-link>
+            <span class="info" @click="lookInfo(item.id)">查看</span>
           </div>
         </li>
       </ul>
+      <p class="to-bottom" :class="{'bottom-show':bottom}">已经到底啦</p>
     </div>
   </div>
 </template>
@@ -36,32 +38,94 @@ export default {
   name: "appealList",
   data() {
     return {
-      leaveList: [],
-      loading: false
+      appealList: [],
+      loading: false,
+      page_loading: true,
+      bottom: false, //已加载所有数据
+      currentPage: 1 //分页页码
     };
   },
   mounted: function() {
+    let that = this;
+    //默认关闭下拉加载 覆盖Indicator插件bug
+    that.loading = true;
     //判断登录状态
     if (!localStorage.getItem("userToken")) {
       //跳转到登录页
       this.$router.push({ path: "/pages/Login" });
     } else {
-      this.$http
-        .get("./static/mock/leaveList.json")
+      that
+        .$http({
+          method: "get",
+          url: "/Home/Verify/index?token=" + localStorage.getItem("userToken")
+        })
         .then(response => {
-          for (let i = 0; i < response.data.length; i++) {
-            if (response.data[i].statusId == 1) {
-              response.data[i].statusClass = "shenghe";
-            } else if (response.data[i].statusId == 2) {
-              response.data[i].statusClass = "tongguo";
-            } else if (response.data[i].statusId == 3) {
-              response.data[i].statusClass = "bohui";
-            }
+          //登录成功之后获取用户数据
+          if (response.data.verify) {
+            that
+              .$http({
+                method: "post",
+                url: "/Home/Index/appeal",
+                data: {
+                  student_num: localStorage.getItem("student_num"),
+                  currentPage: this.currentPage,
+                  pageSize: 10
+                },
+                headers: {
+                  "Content-Type": "application/x-www-form-urlencoded"
+                },
+                //格式化
+                transformRequest: [
+                  function(data) {
+                    let ret = "";
+                    for (let it in data) {
+                      ret +=
+                        encodeURIComponent(it) +
+                        "=" +
+                        encodeURIComponent(data[it]) +
+                        "&";
+                    }
+                    return ret;
+                  }
+                ]
+              })
+              .then(response => {
+                for (let i = 0; i < response.data.length; i++) {
+                  if (response.data[i].status == 1) {
+                    response.data[i].statusClass = "shenghe";
+                    response.data[i].status_text = "审核中";
+                  } else if (response.data[i].status == 2) {
+                    response.data[i].statusClass = "tongguo";
+                    response.data[i].status_text = "同意";
+                  } else if (response.data[i].status == 3) {
+                    response.data[i].statusClass = "bohui";
+                    response.data[i].status_text = "驳回";
+                  }
+                  if (response.data[i].appeal_type == 1) {
+                    response.data[i].type = "忘打卡";
+                  } else if (response.data[i].appeal_type == 2) {
+                    response.data[i].type = "数据有误";
+                  } else if (response.data[i].appeal_type == 3) {
+                    response.data[i].type = "其他";
+                  }
+                }
+                this.page_loading = false;
+                //打开下拉加载
+                that.loading = false;
+                this.appealList = response.data;
+              })
+              .catch(error => {
+                alert("网络错误");
+              });
+          } else {
+            alert("登录已失效，请重新登录！");
+            localStorage.removeItem("userToken");
+            localStorage.removeItem("student_num");
+            this.$router.push({ path: "/pages/Login" });
           }
-          this.leaveList = response.data;
         })
         .catch(error => {
-          console.log(error);
+          alert("网络错误！");
         });
     }
   },
@@ -76,25 +140,92 @@ export default {
         text: "加载中...",
         spinnerType: "fading-circle"
       });
-      this.$http
-        .get("./static/mock/leaveList.json")
+      let that = this;
+      that
+        .$http({
+          method: "get",
+          url: "/Home/Verify/index?token=" + localStorage.getItem("userToken")
+        })
         .then(response => {
-          for (let i = 0; i < response.data.length; i++) {
-            if (response.data[i].statusId == 1) {
-              response.data[i].statusClass = "shenghe";
-            } else if (response.data[i].statusId == 2) {
-              response.data[i].statusClass = "tongguo";
-            } else if (response.data[i].statusId == 3) {
-              response.data[i].statusClass = "bohui";
-            }
-            this.leaveList.push(response.data[i]);
+          //登录成功之后获取用户数据
+          if (response.data.verify) {
+            that
+              .$http({
+                method: "post",
+                url: "/Home/Index/appeal",
+                data: {
+                  student_num: localStorage.getItem("student_num"),
+                  currentPage: this.currentPage + 1,
+                  pageSize: 10
+                },
+                headers: {
+                  "Content-Type": "application/x-www-form-urlencoded"
+                },
+                //格式化
+                transformRequest: [
+                  function(data) {
+                    let ret = "";
+                    for (let it in data) {
+                      ret +=
+                        encodeURIComponent(it) +
+                        "=" +
+                        encodeURIComponent(data[it]) +
+                        "&";
+                    }
+                    return ret;
+                  }
+                ]
+              })
+              .then(response => {
+                if (response.data) {
+                  for (let i = 0; i < response.data.length; i++) {
+                    if (response.data[i].status == 1) {
+                      response.data[i].statusClass = "shenghe";
+                      response.data[i].status_text = "审核中";
+                    } else if (response.data[i].status == 2) {
+                      response.data[i].statusClass = "tongguo";
+                      response.data[i].status_text = "同意";
+                    } else if (response.data[i].status == 3) {
+                      response.data[i].statusClass = "bohui";
+                      response.data[i].status_text = "驳回";
+                    }
+                    if (response.data[i].appeal_type == 1) {
+                      response.data[i].type = "忘打卡";
+                    } else if (response.data[i].appeal_type == 2) {
+                      response.data[i].type = "数据有误";
+                    } else if (response.data[i].appeal_type == 3) {
+                      response.data[i].type = "其他";
+                    }
+                    //添加新的内容
+                    this.appealList.push(response.data[i]);
+                  }
+                  that.currentPage++;
+                  this.loading = false;
+                  Indicator.close();
+                } else {
+                  this.loading = true;
+                  Indicator.close();
+                  that.bottom = true;
+                }
+              })
+              .catch(error => {
+                alert("网络错误");
+              });
+          } else {
+            alert("登录已失效，请重新登录！");
+            localStorage.removeItem("userToken");
+            localStorage.removeItem("student_num");
+            this.$router.push({ path: "/pages/Login" });
           }
-          this.loading = false;
-          Indicator.close();
         })
         .catch(error => {
-          console.log(error);
+          alert("网络错误！");
         });
+    },
+    lookInfo(uid) {
+      //存储内页id
+      sessionStorage.setItem("appeal_id", uid);
+      this.$router.push({ path: "/pages/appeal/appealInfo" });
     }
   }
 };
@@ -104,6 +235,16 @@ export default {
 <style scoped lang="less">
 .appealList {
   width: 100%;
+  .loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 999;
+  }
+  .loading-show {
+    display: none;
+  }
   .title {
     width: 100%;
     height: 1.75rem;
@@ -155,6 +296,18 @@ export default {
         color: #cb121b;
       }
     }
+  }
+  .to-bottom {
+    width: 100%;
+    height: 1rem;
+    line-height: 1rem;
+    color: #bbb;
+    font-size: 0.5rem;
+    text-align: center;
+    display: none;
+  }
+  .bottom-show {
+    display: block;
   }
   .width-1 {
     width: 5rem;

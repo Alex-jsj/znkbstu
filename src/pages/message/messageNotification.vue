@@ -8,6 +8,7 @@
 
 <template>
   <div class="messageNotification">
+    <mt-spinner type="triple-bounce" class="loading" :class="{'loading-show':!page_loading}"></mt-spinner>
     <!-- 消息列表 -->
     <div class="message">
       <div class="title">
@@ -16,17 +17,18 @@
         <span class="float-left width-3">操作</span>
       </div>
       <ul class="list" v-infinite-scroll="loadMore" infinite-scroll-immediate-check="true" infinite-scroll-disabled="loading" infinite-scroll-distance="0">
-        <li v-for="(item,index) in message_list" :key="index" :class="item.read?'read':'unread'">
-          <div class="width-1 float-left list-item item-1">{{item.date}}</div>
+        <li v-for="(item,index) in message_list" :key="index" :class="item.status?'read':'unread'">
+          <div class="width-1 float-left list-item item-1">{{item.time}}</div>
           <div class="width-2 float-left list-item item-2">
-            <p class="status" :class="item.statusClass">{{item.status}}</p>
+            <!-- <p class="status" :class="item.statusClass">{{item.status}}</p> -->
             <p class="list-title">{{item.title}}</p>
           </div>
           <div class="width-3 float-left list-item">
-            <router-link to="/pages/message/messageInfo" class="info">查看</router-link>
+            <span class="info" @click="lookInfo(item.id,item.status)">查看</span>
           </div>
         </li>
       </ul>
+      <p class="to-bottom" :class="{'bottom-show':bottom}">已经到底啦</p>
     </div>
     <!-- 底部菜单 -->
     <Menu :linkActive="linkActive"></Menu>
@@ -43,13 +45,19 @@ export default {
     return {
       linkActive: 5,
       message_list: [],
-      loading: false
+      page_loading: true,
+      loading: false,
+      bottom: false, //已加载所有数据
+      currentPage: 1 //分页页码
     };
   },
   components: {
     Menu
   },
   mounted: function() {
+    let that = this;
+    //默认关闭下拉加载 覆盖Indicator插件bug
+    that.loading = true;
     //修改页面title
     document.title = "消息通知";
     //判断登录状态
@@ -57,13 +65,59 @@ export default {
       //跳转到登录页
       this.$router.push({ path: "/pages/Login" });
     } else {
-      this.$http
-        .get("./static/mock/messageNotification.json")
+      that
+        .$http({
+          method: "get",
+          url: "/Home/Verify/index?token=" + localStorage.getItem("userToken")
+        })
         .then(response => {
-          this.message_list = response.data;
+          //登录成功之后获取用户数据
+          if (response.data.verify) {
+            that
+              .$http({
+                method: "post",
+                url: "/Home/Index/message",
+                data: {
+                  student_num: localStorage.getItem("student_num"),
+                  currentPage: this.currentPage,
+                  pageSize: 10
+                },
+                headers: {
+                  "Content-Type": "application/x-www-form-urlencoded"
+                },
+                //格式化
+                transformRequest: [
+                  function(data) {
+                    let ret = "";
+                    for (let it in data) {
+                      ret +=
+                        encodeURIComponent(it) +
+                        "=" +
+                        encodeURIComponent(data[it]) +
+                        "&";
+                    }
+                    return ret;
+                  }
+                ]
+              })
+              .then(response => {
+                this.page_loading = false;
+                //打开下拉加载
+                that.loading = false;
+                this.message_list = response.data;
+              })
+              .catch(error => {
+                alert("网络错误");
+              });
+          } else {
+            alert("登录已失效，请重新登录！");
+            localStorage.removeItem("userToken");
+            localStorage.removeItem("student_num");
+            this.$router.push({ path: "/pages/Login" });
+          }
         })
         .catch(error => {
-          console.log(error);
+          alert("网络错误！");
         });
     }
   },
@@ -78,18 +132,79 @@ export default {
         text: "加载中...",
         spinnerType: "fading-circle"
       });
-      this.$http
-        .get("./static/mock/messageNotification.json")
+      let that = this;
+      that
+        .$http({
+          method: "get",
+          url: "/Home/Verify/index?token=" + localStorage.getItem("userToken")
+        })
         .then(response => {
-          for (let i = 0; i < response.data.length; i++) {
-            this.message_list.push(response.data[i]);
+          //登录成功之后获取用户数据
+          if (response.data.verify) {
+            that
+              .$http({
+                method: "post",
+                url: "/Home/Index/message",
+                data: {
+                  student_num: localStorage.getItem("student_num"),
+                  currentPage: that.currentPage + 1,
+                  pageSize: 10
+                },
+                headers: {
+                  "Content-Type": "application/x-www-form-urlencoded"
+                },
+                //格式化
+                transformRequest: [
+                  function(data) {
+                    let ret = "";
+                    for (let it in data) {
+                      ret +=
+                        encodeURIComponent(it) +
+                        "=" +
+                        encodeURIComponent(data[it]) +
+                        "&";
+                    }
+                    return ret;
+                  }
+                ]
+              })
+              .then(response => {
+                if (response.data) {
+                  for (let i = 0; i < response.data.length; i++) {
+                    //添加新的内容
+                    this.message_list.push(response.data[i]);
+                  }
+                  that.currentPage++;
+                  this.loading = false;
+                  Indicator.close();
+                } else {
+                  this.loading = true;
+                  Indicator.close();
+                  that.bottom = true;
+                }
+              })
+              .catch(error => {
+                alert("网络错误！");
+                console.log(error);
+              });
+          } else {
+            alert("登录已失效，请重新登录！");
+            localStorage.removeItem("userToken");
+            localStorage.removeItem("student_num");
+            this.$router.push({ path: "/pages/Login" });
           }
-          this.loading = false;
-          Indicator.close();
         })
         .catch(error => {
-          console.log(error);
+          alert("网络错误！");
         });
+    },
+    lookInfo(uid,status) {
+      //存储内页id
+      sessionStorage.setItem("message_id", uid);
+      //存储已读未读状态
+      console.log(status)
+      sessionStorage.setItem("read_status", status);
+      this.$router.push({ path: "/pages/message/messageInfo" });
     }
   }
 };
@@ -99,8 +214,18 @@ export default {
 <style scoped lang="less">
 .messageNotification {
   width: 100%;
-  min-height: 100vh;
+  min-height: 85vh;
   padding-bottom: 2rem;
+  .loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 999;
+  }
+  .loading-show {
+    display: none;
+  }
   .message {
     width: 100%;
     .title {
@@ -162,8 +287,9 @@ export default {
             text-overflow: ellipsis;
             font-size: 0.6rem;
             color: #808080;
-            position: absolute;
-            top: 2rem;
+            // position: absolute;
+            // top: 2rem;
+            line-height: 3.5rem;
           }
           .info {
             display: block;
@@ -216,6 +342,18 @@ export default {
           color: #696969;
         }
       }
+    }
+    .to-bottom {
+      width: 100%;
+      height: 1rem;
+      line-height: 1rem;
+      color: #bbb;
+      font-size: 0.5rem;
+      text-align: center;
+      display: none;
+    }
+    .bottom-show {
+      display: block;
     }
     .width-1 {
       width: 5rem;

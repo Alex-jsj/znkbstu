@@ -58,8 +58,8 @@ export default new Router({
             component: leave,
             children: [{
                     path: '/',
-                    redirect: 'leaveList',
-                    component: leaveList
+                    redirect: 'leaveApply',
+                    component: leaveApply
                 },
                 {
                     path: 'leaveList',
@@ -80,8 +80,8 @@ export default new Router({
             component: appeal,
             children: [{
                     path: '/',
-                    redirect: 'appealList',
-                    component: appealList
+                    redirect: 'appealApply',
+                    component: appealApply
                 },
                 {
                     path: 'appealList',

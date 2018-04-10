@@ -37,7 +37,6 @@ Vue.component(Upload.name, Upload);
 
 
 Vue.config.productionTip = false
-//Vue.config.process.env.NODE_ENV === 'development' ? '/api' : ''
 
 /* eslint-disable no-new */
 new Vue({

@@ -17,9 +17,9 @@
           <!-- picker -->
           <div class="picker float-right">
             <select class="picker-select" v-model="classs">
-              <option v-for="item in classList" :key="item.id" :value="item">{{item.title}}</option>
+              <option v-for="item in classList" :key="item.id" :value="item">{{item.name}}</option>
             </select>
-            <span>{{classs.title}}</span>
+            <span>{{classs.name}}</span>
             <i class="iconfont icon-down"></i>
           </div>
         </div>
@@ -31,7 +31,7 @@
           <span>{{myDate}}</span>
           <i class="iconfont icon-down"></i>
         </div>
-        <mt-datetime-picker ref="startPicker" type="date" :startDate="nowDate" @confirm="handleChange">
+        <mt-datetime-picker ref="startPicker" type="date" @confirm="handleChange">
         </mt-datetime-picker>
       </div>
       <div class="form-item">
@@ -40,9 +40,9 @@
           <!-- picker -->
           <div class="picker float-right">
             <select class="picker-select" v-model="appealType">
-              <option v-for="item in appealTypeList" :key="item.id" :value="item">{{item.title}}</option>
+              <option v-for="item in appealTypeList" :key="item.id" :value="item">{{item.name}}</option>
             </select>
-            <span>{{appealType.title}}</span>
+            <span>{{appealType.name}}</span>
             <i class="iconfont icon-down"></i>
           </div>
         </div>
@@ -56,7 +56,7 @@
       <div class="form-item">
         <span class="item-title float-left">上传附件：</span>
         <div class="item-container3 float-right">
-          <el-upload class="avatar-uploader" action="/Home/Index/upload" :limit="1" :show-file-list="true" :on-remove="handleRemove" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
+          <el-upload name="accessory" class="avatar-uploader" action="/Home/Index/image_upload" :limit="1" :show-file-list="true" :on-remove="handleRemove" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
             <div class="avatar">
               <img v-if="imageUrl" :src="imageUrl">
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
@@ -83,56 +83,70 @@ export default {
       userToken: "",
       student_num: "",
       imageUrl: "",
+      fileUrl: "", //图片上传成功之后返回的服务器地址
+      file_success: false, //图片上传成功
       //
       myDate: "", //己方时间
-      classs: {
-        title: "马克思主义哲学",
-        value: 0
-      },
-      classList: [
-        {
-          title: "马克思主义哲学",
-          value: 0
-        },
-        {
-          title: "图形设计",
-          value: 1
-        },
-        {
-          title: "CAD",
-          value: 2
-        }
-      ],
-      appealType: {
-        title: "事假",
-        value: 0
-      },
+      classs: {},
+      classList: [],
+      appealType: {},
       appealTypeList: [
         {
-          title: "事假",
-          value: 0
+          name: "忘打卡",
+          id: 1
         },
         {
-          title: "病假",
-          value: 1
+          name: "数据有误",
+          id: 2
+        },
+        {
+          name: "其他",
+          id: 3
         }
       ],
       remarks: "", //备注
-      nowDate: new Date(), //最小时间
       submit_btn: true //提交成功之后关闭提交按钮
     };
   },
   mounted: function() {
     let that = this;
-    //设置初始时间
-    let now = new Date();
-    let year = now.getFullYear();
-    let month = now.getMonth() + 1;
-    let day = now.getDate();
-    month < 10 ? (month = "0" + month) : month;
-    day < 10 ? (day = "0" + day) : day;
-    this.myDate = year + "-" + month + "-" + day;
-    this.toDate = year + "-" + month + "-" + day;
+    //判断登录状态
+    if (!localStorage.getItem("userToken")) {
+      //跳转到登录页
+      this.$router.push({ path: "/pages/Login" });
+    } else {
+      that
+        .$http({
+          method: "get",
+          url: "/Home/Verify/index?token=" + localStorage.getItem("userToken")
+        })
+        .then(response => {
+          //登录成功之后获取用户数据
+          if (response.data.verify) {
+            that
+              .$http({
+                method: "get",
+                url: "/Home/Index/appeal_sub"
+              })
+              .then(response => {
+                //获取课程数据
+                that.classList = response.data;
+              })
+              .catch(error => {
+                alert("网络错误");
+              });
+          } else {
+            alert("登录已失效，请重新登录！");
+            localStorage.removeItem("userToken");
+            localStorage.removeItem("student_num");
+            this.$router.push({ path: "/pages/Login" });
+          }
+        })
+        .catch(error => {
+          // alert("网络错误！");
+          console.log(error);
+        });
+    }
   },
   methods: {
     //打开日期选择器
@@ -149,82 +163,113 @@ export default {
       month < 10 ? (month = "0" + month) : month;
       day < 10 ? (day = "0" + day) : day;
       this.myDate = year + "-" + month + "-" + day;
-      //设置结束时间的最小时间
-      if (this.myDate > this.toDate) {
-        this.toDate = this.myDate;
-      }
-      this.nowDate2 = new Date(this.myDate);
-    },
-    //end datepicker change 事件
-    handleChange2(value) {
-      //格式化时间
-      let data = new Date(value);
-      let year = data.getFullYear();
-      let month = data.getMonth() + 1;
-      let day = data.getDate();
-      month < 10 ? (month = "0" + month) : month;
-      day < 10 ? (day = "0" + day) : day;
-      this.toDate = year + "-" + month + "-" + day;
     },
     //表单提交
     submit: function() {
-      var that = this;
-      if (that.teacher && that.remarks && that.imageUrl) {
+      let that = this;
+      if (that.submit_btn) {
         //验证通过
-        that
-          .$http({
-            method: "get",
-            url: "./static/mock/login.json",
-            data: {},
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded"
-            },
-            //格式化
-            transformRequest: [
-              function(data) {
-                let ret = "";
-                for (let it in data) {
-                  ret +=
-                    encodeURIComponent(it) +
-                    "=" +
-                    encodeURIComponent(data[it]) +
-                    "&";
-                }
-                return ret;
+        if (
+          that.classs.id &&
+          that.appealType.id &&
+          that.myDate &&
+          that.remarks &&
+          that.file_success
+        ) {
+          //点击提交之后关闭提交按钮
+          that.submit_btn = false;
+          //先判断token是否过期
+          that
+            .$http({
+              method: "get",
+              url:
+                "/Home/Verify/index?token=" + localStorage.getItem("userToken")
+            })
+            .then(response => {
+              //token验证成功
+              if (response.data.verify) {
+                that
+                  .$http({
+                    method: "post",
+                    url: "/Home/Index/appeal_sub",
+                    data: {
+                      job_num: localStorage.getItem("student_num"),
+                      course: that.classs.name,
+                      date: that.myDate,
+                      appeal_type: that.appealType.id,
+                      reason: that.remarks,
+                      accessory: that.fileUrl
+                    },
+                    headers: {
+                      "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    //格式化
+                    transformRequest: [
+                      function(data) {
+                        let ret = "";
+                        for (let it in data) {
+                          ret +=
+                            encodeURIComponent(it) +
+                            "=" +
+                            encodeURIComponent(data[it]) +
+                            "&";
+                        }
+                        return ret;
+                      }
+                    ]
+                  })
+                  .then(response => {
+                    if (response.data.code == 1) {
+                      let instance = Toast("提交成功");
+                      setTimeout(() => {
+                        instance.close();
+                        that.$router.push({
+                          path: "/pages/appeal/appeal/appealList"
+                        });
+                      }, 500);
+                    } else {
+                      //提交失败则重新开放登录按钮
+                      that.submit_btn = true;
+                      let instance = Toast("提交失败");
+                      setTimeout(() => {
+                        instance.close();
+                      }, 1000);
+                    }
+                  })
+                  .catch(error => {
+                    let instance = Toast("提交失败");
+                    setTimeout(() => {
+                      instance.close();
+                    }, 1000);
+                    //提交失败则重新开放登录按钮
+                    that.submit_btn = true;
+                    console.log(error);
+                  });
+              } else {
+                alert("登录已失效，请重新登录！");
+                localStorage.removeItem("userToken");
+                localStorage.removeItem("student_num");
+                this.$router.push({ path: "/pages/Login" });
               }
-            ]
-          })
-          .then(response => {
-            let instance = Toast("提交成功");
-            //提交成功之后关闭提交按钮并跳转到预约列表页
-            that.submit_btn = false;
-            setTimeout(() => {
-              instance.close();
-              that.$router.push({
-                path: "/pages/studentsLeave/leave/leaveList"
-              });
-            }, 500);
-          })
-          .catch(error => {
-            let instance = Toast("提交失败");
-            setTimeout(() => {
-              instance.close();
-            }, 1000);
-            //提交失败则重新开放登录按钮
-            that.submit_btn = true;
-            console.log(error);
-          });
-      } else {
-        MessageBox("提示", "请完善信息！");
+            })
+            .catch(error => {
+              alert("网络错误！");
+              console.log(error);
+            });
+        } else {
+          MessageBox("提示", "请完善信息！");
+        }
       }
     },
     //上传成功的钩子
     handleAvatarSuccess(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw);
-      //console.log(file.name)
-      //console.log(file.url)
-      //console.log(file.raw.type);
-      console.log(file);
+      this.fileUrl = res.accessory[0];
+      if (res.accessory[0]) {
+        this.file_success = true;
+      } else {
+        this.file_success = false;
+      }
     },
     //上传之前的钩子
     beforeAvatarUpload(file) {
@@ -241,6 +286,8 @@ export default {
     //文件移除的钩子
     handleRemove(file, fileList) {
       this.imageUrl = "";
+      this.fileUrl = "";
+      this.file_success = false;
     }
   }
 };
