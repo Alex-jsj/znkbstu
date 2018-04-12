@@ -33,7 +33,7 @@
 </template>
 <script>
 //引入loading组件
-import { Indicator } from "mint-ui";
+import { Indicator, Toast } from "mint-ui";
 export default {
   name: "studentsLeave",
   data() {
@@ -90,38 +90,47 @@ export default {
                 ]
               })
               .then(response => {
-                for (let i = 0; i < response.data.length; i++) {
-                  if (response.data[i].status == 1) {
-                    response.data[i].statusClass = "shenghe";
-                    response.data[i].status_text = "审核中";
-                  } else if (response.data[i].status == 2) {
-                    response.data[i].statusClass = "tongguo";
-                    response.data[i].status_text = "同意";
-                  } else if (response.data[i].status == 3) {
-                    response.data[i].statusClass = "bohui";
-                    response.data[i].status_text = "驳回";
+                if (response.data) {
+                  for (let i = 0; i < response.data.length; i++) {
+                    if (response.data[i].status == 1) {
+                      response.data[i].statusClass = "shenghe";
+                      response.data[i].status_text = "审核中";
+                    } else if (response.data[i].status == 2) {
+                      response.data[i].statusClass = "tongguo";
+                      response.data[i].status_text = "同意";
+                    } else if (response.data[i].status == 3) {
+                      response.data[i].statusClass = "bohui";
+                      response.data[i].status_text = "驳回";
+                    }
+                    if (response.data[i].request_type == 1) {
+                      response.data[i].type = "事假";
+                    } else if (response.data[i].request_type == 2) {
+                      response.data[i].type = "病假";
+                    } else if (response.data[i].request_type == 3) {
+                      response.data[i].type = "补假";
+                    }
                   }
-                  if (response.data[i].request_type == 1) {
-                    response.data[i].type = "事假";
-                  } else if (response.data[i].request_type == 2) {
-                    response.data[i].type = "病假";
-                  } else if (response.data[i].request_type == 3) {
-                    response.data[i].type = "补假";
-                  }
+                  this.page_loading = false;
+                  //打开下拉加载
+                  that.loading = false;
+                  this.leaveList = response.data;
+                } else {
+                  let instance = Toast("暂无数据");
+                  this.page_loading = false;
                 }
-                this.page_loading = false;
-                //打开下拉加载
-                that.loading = false;
-                this.leaveList = response.data;
               })
               .catch(error => {
                 alert("网络错误");
               });
           } else {
-            alert("登录已失效，请重新登录！");
-            localStorage.removeItem("userToken");
-            localStorage.removeItem("student_num");
-            this.$router.push({ path: "/pages/Login" });
+            //登录过期 => 清除前台存储的登录信息并返回登录页
+            let instance = Toast("登录已失效，请重新登录！");
+            setTimeout(() => {
+              instance.close();
+              localStorage.removeItem("userToken");
+              localStorage.removeItem("student_num");
+              this.$router.push({ path: "/pages/Login" });
+            }, 1000);
           }
         })
         .catch(error => {

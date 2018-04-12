@@ -16,7 +16,7 @@
     <div class="login-box">
       <!-- user -->
       <div class="container user">
-        <input type="text" placeholder="请输入学号 / 工号" v-model="user" @blur="userV()" :class="{'test':userTest}">
+        <input type="text" placeholder="请输入学号" v-model="user" @blur="userV()" :class="{'test':userTest}">
         <i class="iconfont icon-user"></i>
         <!-- 错误提示 -->
         <span class="errText">{{userErr}}</span>
@@ -33,14 +33,15 @@
         <button @click="formSubmit()">登&nbsp;&nbsp;&nbsp;录</button>
       </div>
       <!-- 微信快捷登录 -->
-      <div class="container wechat-submit">
+      <!-- <div class="container wechat-submit">
         <button>微信快捷登录</button>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
 <script>
 import { MessageBox, Toast } from "mint-ui";
+import qs from "qs"; //序列化
 export default {
   name: "Login",
   data() {
@@ -104,27 +105,10 @@ export default {
         this.$http({
           method: "post",
           url: "/Home/Login/login",
-          data: {
+          data: qs.stringify({
             student_num: this.user,
             password: this.password
-          },
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
-          },
-          //格式化
-          transformRequest: [
-            function(data) {
-              let ret = "";
-              for (let it in data) {
-                ret +=
-                  encodeURIComponent(it) +
-                  "=" +
-                  encodeURIComponent(data[it]) +
-                  "&";
-              }
-              return ret;
-            }
-          ]
+          })
         })
           .then(response => {
             if (response.data.code == 1) {

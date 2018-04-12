@@ -179,7 +179,7 @@ export default {
       }
       if (that.submit_btn) {
         //验证通过
-        if (that.tec_class_can && that.remarks && that.file_success) {
+        if (that.tec_class_can && that.remarks) {
           //点击提交之后关闭提交按钮
           that.submit_btn = false;
           //先判断token是否过期
@@ -250,10 +250,14 @@ export default {
                     that.submit_btn = true;
                   });
               } else {
-                alert("登录已失效，请重新登录！");
-                localStorage.removeItem("userToken");
-                localStorage.removeItem("student_num");
-                this.$router.push({ path: "/pages/Login" });
+                //登录过期 => 清除前台存储的登录信息并返回登录页
+                let instance = Toast("登录已失效，请重新登录！");
+                setTimeout(() => {
+                  instance.close();
+                  localStorage.removeItem("userToken");
+                  localStorage.removeItem("student_num");
+                  this.$router.push({ path: "/pages/Login" });
+                }, 1000);
               }
             })
             .catch(error => {

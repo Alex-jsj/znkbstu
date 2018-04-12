@@ -288,11 +288,13 @@ export default {
           &:nth-child(3) {
             .bg {
               background: #808080;
+              // border-bottom: 1px solid #808080;
             }
           }
           &:nth-child(5) {
             .bg {
               background: #808080;
+              // border-bottom: 1px solid #808080;
             }
           }
           .item {
@@ -353,6 +355,7 @@ export default {
           .bg {
             color: #fff;
             background: #b3b3b3;
+            // border-bottom: 1px solid #b3b3b3;
           }
         }
       }

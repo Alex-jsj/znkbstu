@@ -54,7 +54,6 @@ export default {
     if (!localStorage.getItem("userToken")) {
       //跳转到登录页
       this.$router.push({ path: "/pages/Login" });
-    } else {
     }
   },
   methods: {}

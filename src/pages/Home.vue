@@ -10,9 +10,7 @@
     <div class="info">
       <div class="top-box">
         <span class="date float-left">2018/01/31 星期三</span>
-        <router-link to="/pages/Login" class="float-right" @click="outLogin()">
-          <span class="outlogin" @click="outLogin()">退出登录</span>
-        </router-link>
+        <span class="outlogin float-right" @click="outLogin()">退出登录</span>
       </div>
       <p class="name">{{user_info.name}}</p>
       <p class="department">{{user_info.faculty}} {{user_info.grade}}</p>
@@ -65,6 +63,7 @@
 </template>
 <script>
 import { Toast } from "mint-ui";
+import qs from "qs"; //序列化
 export default {
   name: "Home",
   data() {
@@ -152,108 +151,89 @@ export default {
   mounted: function() {
     //修改页面title
     document.title = "设计艺术学院智慧管理系统";
-    //判断登录状态
-    if (!localStorage.getItem("userToken")) {
-      //跳转到登录页
-      this.$router.push({ path: "/pages/Login" });
-    } else {
-      let that = this;
-      //进页面先判断token是否过期
-      that
-        .$http({
-          method: "get",
-          url: "/Home/Verify/index?token=" + localStorage.getItem("userToken")
-        })
-        .then(response => {
-          //登录成功之后获取用户数据
-          if (response.data.verify) {
-            that
-              .$http({
-                method: "post",
-                url: "/Home/Index/index",
-                data: {
-                  student_num: localStorage.getItem("student_num")
-                },
-                headers: {
-                  "Content-Type": "application/x-www-form-urlencoded"
-                },
-                //格式化
-                transformRequest: [
-                  function(data) {
-                    let ret = "";
-                    for (let it in data) {
-                      ret +=
-                        encodeURIComponent(it) +
-                        "=" +
-                        encodeURIComponent(data[it]) +
-                        "&";
-                    }
-                    return ret;
-                  }
-                ]
+    let that = this;
+    //进页面先判断登录是否过期
+    that
+      .$http({
+        method: "get",
+        url: "/Home/Verify/index?token=" + localStorage.getItem("userToken")
+      })
+      .then(response => {
+        if (response.data.verify) {
+          //登录未过期 => 获取用户数据
+          that
+            .$http({
+              method: "post",
+              url: "/Home/Index/index",
+              data: qs.stringify({
+                student_num: localStorage.getItem("student_num")
               })
-              .then(response => {
-                that.user_info = response.data;
-                //消息通知
-                if (that.user_info.information > 99) {
-                  that.message = "99+";
-                } else if (that.user_info.information == 0) {
-                  that.clear_message(that.menu_good);
-                  that.clear_message(that.menu_bad);
-                } else {
-                  that.message = that.user_info.information;
-                }
-                //出勤率
-                if (response.data.request) {
-                  that.attendance = Math.round(
-                    (1 -
-                      (response.data.request + response.data.truant) /
-                        response.data.count) *
-                      100
-                  );
-                }
-                let time_canvas = document.getElementById("attendance");
-                let canvas_color;
-                //根据出勤率更换首页风格
-                if (that.attendance < 90) {
-                  that.bg_choose = false;
-                  canvas_color = "#cb121b";
-                } else {
-                  that.bg_choose = true;
-                  canvas_color = "#86c03f";
-                }
-                //出勤率进度条方法
-                that.drawMain(
-                  time_canvas,
-                  that.attendance,
-                  canvas_color,
-                  "#c8c8c8"
+            })
+            .then(response => {
+              that.user_info = response.data;
+              //消息通知
+              if (that.user_info.information > 99) {
+                that.message = "99+";
+              } else if (that.user_info.information == 0) {
+                that.clear_message(that.menu_good);
+                that.clear_message(that.menu_bad);
+              } else {
+                that.message = that.user_info.information;
+              }
+              //出勤率
+              if (response.data.request) {
+                that.attendance = Math.round(
+                  (1 -
+                    (response.data.request + response.data.truant) /
+                      response.data.count) *
+                    100
                 );
-              })
-              .catch(error => {
-                console.log(error);
-              });
-          } else {
-            alert("登录已失效，请重新登录！");
+              }
+              let time_canvas = document.getElementById("attendance");
+              let canvas_color;
+              //根据出勤率更换首页风格
+              if (that.attendance < 90) {
+                that.bg_choose = false;
+                canvas_color = "#cb121b";
+              } else {
+                that.bg_choose = true;
+                canvas_color = "#86c03f";
+              }
+              //出勤率进度条方法
+              that.drawMain(
+                time_canvas,
+                that.attendance,
+                canvas_color,
+                "#c8c8c8"
+              );
+            })
+            .catch(error => {
+              alert("网络错误");
+              console.log(error);
+            });
+        } else {
+          //登录过期 => 清除前台存储的登录信息并返回登录页
+          let instance = Toast("登录已失效，请重新登录！");
+          setTimeout(() => {
+            instance.close();
             localStorage.removeItem("userToken");
             localStorage.removeItem("student_num");
             this.$router.push({ path: "/pages/Login" });
-          }
-        })
-        .catch(error => {
-          let instance = Toast("网络错误！");
-          console.log(error);
-        });
-    }
+          }, 1000);
+        }
+      })
+      .catch(error => {
+        alert("网络错误");
+        console.log(error);
+      });
   },
   methods: {
-    /* 
-        @drawing_elem: 绘制对象 
-        @percent：绘制圆环百分比, 范围[0, 100] 
-        @forecolor: 绘制圆环的前景色，颜色代码 
-        @bgcolor: 绘制圆环的背景色，颜色代码 
-    */
+    //canvas圆环
     drawMain: function(drawing_elem, percent, forecolor, bgcolor) {
+      // @drawing_elem: 绘制对象
+      // @percent：绘制圆环百分比, 范围[0, 100]
+      // @forecolor: 绘制圆环的前景色，颜色代码
+      // @bgcolor: 绘制圆环的背景色，颜色代码
       var context = drawing_elem.getContext("2d");
       var center_x = drawing_elem.width / 2;
       var center_y = drawing_elem.height / 2;
@@ -319,7 +299,28 @@ export default {
     },
     //退出登录
     outLogin: function() {
-      localStorage.removeItem("userToken");
+      this.$http({
+        method: "get",
+        url: "/Home/login/logout"
+      })
+        .then(response => {
+          if (response.data) {
+            localStorage.removeItem("userToken");
+            localStorage.removeItem("student_num");
+            let instance = Toast("登出成功");
+            setTimeout(() => {
+              instance.close();
+              this.$router.push({ path: "/pages/Login" });
+            }, 500);
+          }
+        })
+        .catch(error => {
+          let instance = Toast("网络错误");
+          setTimeout(() => {
+            instance.close();
+          }, 1000);
+          console.log(error);
+        });
     },
     //清除消息通知小红点
     clear_message: function(obj) {

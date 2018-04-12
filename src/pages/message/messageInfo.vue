@@ -114,10 +114,14 @@ export default {
                 alert("网络错误");
               });
           } else {
-            alert("登录已失效，请重新登录！");
-            localStorage.removeItem("userToken");
-            localStorage.removeItem("student_num");
-            this.$router.push({ path: "/pages/Login" });
+            //登录过期 => 清除前台存储的登录信息并返回登录页
+            let instance = Toast("登录已失效，请重新登录！");
+            setTimeout(() => {
+              instance.close();
+              localStorage.removeItem("userToken");
+              localStorage.removeItem("student_num");
+              this.$router.push({ path: "/pages/Login" });
+            }, 1000);
           }
         })
         .catch(error => {

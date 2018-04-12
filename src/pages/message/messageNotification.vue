@@ -36,7 +36,7 @@
 </template>
 <script>
 //引入loading组件
-import { Indicator } from "mint-ui";
+import { Indicator, Toast } from "mint-ui";
 /* 引入组件 */
 import Menu from "@/components/Menu";
 export default {
@@ -101,19 +101,28 @@ export default {
                 ]
               })
               .then(response => {
-                this.page_loading = false;
-                //打开下拉加载
-                that.loading = false;
-                this.message_list = response.data;
+                if (response.data) {
+                  this.page_loading = false;
+                  //打开下拉加载
+                  that.loading = false;
+                  this.message_list = response.data;
+                } else {
+                  let instance = Toast("暂无数据");
+                  this.page_loading = false;
+                }
               })
               .catch(error => {
                 alert("网络错误");
               });
           } else {
-            alert("登录已失效，请重新登录！");
-            localStorage.removeItem("userToken");
-            localStorage.removeItem("student_num");
-            this.$router.push({ path: "/pages/Login" });
+            //登录过期 => 清除前台存储的登录信息并返回登录页
+            let instance = Toast("登录已失效，请重新登录！");
+            setTimeout(() => {
+              instance.close();
+              localStorage.removeItem("userToken");
+              localStorage.removeItem("student_num");
+              this.$router.push({ path: "/pages/Login" });
+            }, 1000);
           }
         })
         .catch(error => {
@@ -198,11 +207,11 @@ export default {
           alert("网络错误！");
         });
     },
-    lookInfo(uid,status) {
+    lookInfo(uid, status) {
       //存储内页id
       sessionStorage.setItem("message_id", uid);
       //存储已读未读状态
-      console.log(status)
+      console.log(status);
       sessionStorage.setItem("read_status", status);
       this.$router.push({ path: "/pages/message/messageInfo" });
     }
