@@ -47,87 +47,86 @@ export default {
   mounted: function() {
     //修改页面title
     document.title = "消息通知";
-    //判断登录状态
-    if (!localStorage.getItem("userToken")) {
-      //跳转到登录页
-      this.$router.push({ path: "/pages/Login" });
-    } else {
-      let that = this;
-      that
-        .$http({
-          method: "get",
-          url: "/Home/Verify/index?token=" + localStorage.getItem("userToken")
-        })
-        .then(response => {
-          //登录成功之后获取用户数据
-          if (response.data.verify) {
-            that
-              .$http({
-                method: "post",
-                url: "/Home/Index/message_particulars",
-                data: {
-                  student_num: localStorage.getItem("student_num"),
-                  id: sessionStorage.getItem("message_id"),
-                  read_status: sessionStorage.getItem("read_status")
-                },
-                headers: {
-                  "Content-Type": "application/x-www-form-urlencoded"
-                },
-                //格式化
-                transformRequest: [
-                  function(data) {
-                    let ret = "";
-                    for (let it in data) {
-                      ret +=
-                        encodeURIComponent(it) +
-                        "=" +
-                        encodeURIComponent(data[it]) +
-                        "&";
-                    }
-                    return ret;
+    let that = this;
+    that
+      .$http({
+        method: "get",
+        url: "/Home/Verify/index?token=" + localStorage.getItem("userToken")
+      })
+      .then(response => {
+        //登录成功之后获取用户数据
+        if (response.data.verify) {
+          that
+            .$http({
+              method: "post",
+              url: "/Home/Index/message_particulars",
+              data: {
+                student_num: localStorage.getItem("student_num"),
+                id: sessionStorage.getItem("message_id"),
+                read_status: sessionStorage.getItem("read_status")
+              },
+              headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+              },
+              //格式化
+              transformRequest: [
+                function(data) {
+                  let ret = "";
+                  for (let it in data) {
+                    ret +=
+                      encodeURIComponent(it) +
+                      "=" +
+                      encodeURIComponent(data[it]) +
+                      "&";
                   }
-                ]
-              })
-              .then(response => {
-                this.messageInfo = response.data;
-                //换算星期
-                this.messageInfo.week = new Date(
-                  this.messageInfo.time
-                ).getDay();
-                if (this.messageInfo.week == 0) {
-                  this.messageInfo.week = "周日";
-                } else if (this.messageInfo.week == 1) {
-                  this.messageInfo.week = "周一";
-                } else if (this.messageInfo.week == 2) {
-                  this.messageInfo.week = "周二";
-                } else if (this.messageInfo.week == 3) {
-                  this.messageInfo.week = "周三";
-                } else if (this.messageInfo.week == 4) {
-                  this.messageInfo.week = "周四";
-                } else if (this.messageInfo.week == 5) {
-                  this.messageInfo.week = "周五";
-                } else if (this.messageInfo.week == 6) {
-                  this.messageInfo.week = "周六";
+                  return ret;
                 }
-              })
-              .catch(error => {
-                alert("网络错误");
-              });
-          } else {
-            //登录过期 => 清除前台存储的登录信息并返回登录页
-            let instance = Toast("登录已失效，请重新登录！");
-            setTimeout(() => {
-              instance.close();
-              localStorage.removeItem("userToken");
-              localStorage.removeItem("student_num");
-              this.$router.push({ path: "/pages/Login" });
-            }, 1000);
-          }
-        })
-        .catch(error => {
-          alert("网络错误");
-        });
-    }
+              ]
+            })
+            .then(response => {
+              this.messageInfo = response.data;
+              //格式化日期
+              let year = new Date().getFullYear();
+              let month = new Date().getMonth() + 1;
+              let day = new Date().getDate();
+              month < 10 ? (month = "0" + month) : month;
+              day < 10 ? (day = "0" + day) : day;
+              this.messageInfo.time_now = year + "-" + month + "-" + day;
+              //换算星期
+              this.messageInfo.week = new Date(this.messageInfo.time).getDay();
+              if (this.messageInfo.week == 0) {
+                this.messageInfo.week = "周日";
+              } else if (this.messageInfo.week == 1) {
+                this.messageInfo.week = "周一";
+              } else if (this.messageInfo.week == 2) {
+                this.messageInfo.week = "周二";
+              } else if (this.messageInfo.week == 3) {
+                this.messageInfo.week = "周三";
+              } else if (this.messageInfo.week == 4) {
+                this.messageInfo.week = "周四";
+              } else if (this.messageInfo.week == 5) {
+                this.messageInfo.week = "周五";
+              } else if (this.messageInfo.week == 6) {
+                this.messageInfo.week = "周六";
+              }
+            })
+            .catch(error => {
+              alert("网络错误");
+            });
+        } else {
+          //登录过期 => 清除前台存储的登录信息并返回登录页
+          let instance = Toast("登录已失效，请重新登录！");
+          setTimeout(() => {
+            instance.close();
+            localStorage.removeItem("userToken");
+            localStorage.removeItem("student_num");
+            this.$router.push({ path: "/pages/Login" });
+          }, 1000);
+        }
+      })
+      .catch(error => {
+        alert("网络错误");
+      });
   },
   methods: {}
 };

@@ -13,8 +13,8 @@
     <div class="container">
       <!-- date -->
       <div class="date">
-        <span class="float-left">{{leaveInfo.time}}</span>
-        <span class="float-left week">{{leaveInfo.week}}</span>
+        <!-- <span class="float-left">{{leaveInfo.time_now}}</span>
+        <span class="float-left week">{{leaveInfo.week}}</span> -->
       </div>
       <!-- list -->
       <div class="list">
@@ -29,6 +29,10 @@
         <div class="list-item">
           <span class="float-left">申诉类型：</span>
           <span class="float-left">{{leaveInfo.type}}</span>
+        </div>
+        <div class="list-item">
+          <span class="float-left">提交申诉时间：</span>
+          <span class="float-left">{{leaveInfo.time}}({{leaveInfo.week}})</span>
         </div>
         <div class="list-item">
           <span class="float-left">申诉时间：</span>
@@ -67,101 +71,102 @@ export default {
   mounted: function() {
     //修改页面title
     document.title = "申诉详情";
-    //判断登录状态
-    if (!localStorage.getItem("userToken")) {
-      //跳转到登录页
-      this.$router.push({ path: "/pages/Login" });
-    } else {
-      let that = this;
-      that
-        .$http({
-          method: "get",
-          url: "/Home/Verify/index?token=" + localStorage.getItem("userToken")
-        })
-        .then(response => {
-          //登录成功之后获取用户数据
-          if (response.data.verify) {
-            that
-              .$http({
-                method: "post",
-                url: "/Home/Index/appeal_particulars",
-                data: {
-                  student_num: localStorage.getItem("student_num"),
-                  id: sessionStorage.getItem("appeal_id")
-                },
-                headers: {
-                  "Content-Type": "application/x-www-form-urlencoded"
-                },
-                //格式化
-                transformRequest: [
-                  function(data) {
-                    let ret = "";
-                    for (let it in data) {
-                      ret +=
-                        encodeURIComponent(it) +
-                        "=" +
-                        encodeURIComponent(data[it]) +
-                        "&";
-                    }
-                    return ret;
+    let that = this;
+    that
+      .$http({
+        method: "get",
+        url: "/Home/Verify/index?token=" + localStorage.getItem("userToken")
+      })
+      .then(response => {
+        //登录成功之后获取用户数据
+        if (response.data.verify) {
+          that
+            .$http({
+              method: "post",
+              url: "/Home/Index/appeal_particulars",
+              data: {
+                student_num: localStorage.getItem("student_num"),
+                id: sessionStorage.getItem("appeal_id")
+              },
+              headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+              },
+              //格式化
+              transformRequest: [
+                function(data) {
+                  let ret = "";
+                  for (let it in data) {
+                    ret +=
+                      encodeURIComponent(it) +
+                      "=" +
+                      encodeURIComponent(data[it]) +
+                      "&";
                   }
-                ]
-              })
-              .then(response => {
-                this.leaveInfo = response.data;
-                //换算星期
-                this.leaveInfo.week = new Date(this.leaveInfo.time).getDay();
-                if (this.leaveInfo.week == 0) {
-                  this.leaveInfo.week = "周日";
-                } else if (this.leaveInfo.week == 1) {
-                  this.leaveInfo.week = "周一";
-                } else if (this.leaveInfo.week == 2) {
-                  this.leaveInfo.week = "周二";
-                } else if (this.leaveInfo.week == 3) {
-                  this.leaveInfo.week = "周三";
-                } else if (this.leaveInfo.week == 4) {
-                  this.leaveInfo.week = "周四";
-                } else if (this.leaveInfo.week == 5) {
-                  this.leaveInfo.week = "周五";
-                } else if (this.leaveInfo.week == 6) {
-                  this.leaveInfo.week = "周六";
+                  return ret;
                 }
-                //请假类型
-                if (this.leaveInfo.appeal_type == 1) {
-                  this.leaveInfo.type = "忘打卡";
-                } else if (this.leaveInfo.appeal_type == 2) {
-                  this.leaveInfo.type = "数据有误";
-                } else if (this.leaveInfo.appeal_type == 3) {
-                  this.leaveInfo.type = "其他";
-                }
-                //状态
-                if (this.leaveInfo.status == 1) {
-                  this.leaveInfo.statusClass = "icon-shenhezhong";
-                } else if (this.leaveInfo.status == 2) {
-                  this.leaveInfo.statusClass = "icon-shenhetongguo";
-                } else if (this.leaveInfo.status == 3) {
-                  this.leaveInfo.statusClass = "icon-yibohui";
-                }
-              })
-              .catch(error => {
-                //alert("网络错误");
-                console.log(error);
-              });
-          } else {
-            //登录过期 => 清除前台存储的登录信息并返回登录页
-            let instance = Toast("登录已失效，请重新登录！");
-            setTimeout(() => {
-              instance.close();
-              localStorage.removeItem("userToken");
-              localStorage.removeItem("student_num");
-              this.$router.push({ path: "/pages/Login" });
-            }, 1000);
-          }
-        })
-        .catch(error => {
-          alert("网络错误");
-        });
-    }
+              ]
+            })
+            .then(response => {
+              this.leaveInfo = response.data;
+              //格式化日期
+              let year = new Date().getFullYear();
+              let month = new Date().getMonth() + 1;
+              let day = new Date().getDate();
+              month < 10 ? (month = "0" + month) : month;
+              day < 10 ? (day = "0" + day) : day;
+              this.leaveInfo.time_now = year + "-" + month + "-" + day;
+              //换算星期
+              this.leaveInfo.week = new Date(this.leaveInfo.time).getDay();
+              if (this.leaveInfo.week == 0) {
+                this.leaveInfo.week = "周日";
+              } else if (this.leaveInfo.week == 1) {
+                this.leaveInfo.week = "周一";
+              } else if (this.leaveInfo.week == 2) {
+                this.leaveInfo.week = "周二";
+              } else if (this.leaveInfo.week == 3) {
+                this.leaveInfo.week = "周三";
+              } else if (this.leaveInfo.week == 4) {
+                this.leaveInfo.week = "周四";
+              } else if (this.leaveInfo.week == 5) {
+                this.leaveInfo.week = "周五";
+              } else if (this.leaveInfo.week == 6) {
+                this.leaveInfo.week = "周六";
+              }
+              //请假类型
+              if (this.leaveInfo.appeal_type == 1) {
+                this.leaveInfo.type = "忘打卡";
+              } else if (this.leaveInfo.appeal_type == 2) {
+                this.leaveInfo.type = "数据有误";
+              } else if (this.leaveInfo.appeal_type == 3) {
+                this.leaveInfo.type = "其他";
+              }
+              //状态
+              if (this.leaveInfo.status == 1) {
+                this.leaveInfo.statusClass = "icon-shenhezhong";
+              } else if (this.leaveInfo.status == 2) {
+                this.leaveInfo.statusClass = "icon-shenhetongguo";
+              } else if (this.leaveInfo.status == 3) {
+                this.leaveInfo.statusClass = "icon-yibohui";
+              }
+            })
+            .catch(error => {
+              //alert("网络错误");
+              console.log(error);
+            });
+        } else {
+          //登录过期 => 清除前台存储的登录信息并返回登录页
+          let instance = Toast("登录已失效，请重新登录！");
+          setTimeout(() => {
+            instance.close();
+            localStorage.removeItem("userToken");
+            localStorage.removeItem("student_num");
+            this.$router.push({ path: "/pages/Login" });
+          }, 1000);
+        }
+      })
+      .catch(error => {
+        alert("网络错误");
+      });
   },
   methods: {}
 };
@@ -237,7 +242,7 @@ export default {
     }
     .type {
       position: absolute;
-      top: 0.7rem;
+      top: 0.2rem;
       right: 0.5rem;
       font-size: 5rem;
       color: #808080;

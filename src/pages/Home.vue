@@ -171,7 +171,6 @@ export default {
     } else if (the_date == 7) {
       that.the_week = "周日";
     }
-    console.log(the_date);
     //进页面先判断登录是否过期
     that
       .$http({

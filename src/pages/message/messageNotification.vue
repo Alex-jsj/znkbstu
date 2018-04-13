@@ -61,74 +61,69 @@ export default {
     //修改页面title
     document.title = "消息通知";
     //判断登录状态
-    if (!localStorage.getItem("userToken")) {
-      //跳转到登录页
-      this.$router.push({ path: "/pages/Login" });
-    } else {
-      that
-        .$http({
-          method: "get",
-          url: "/Home/Verify/index?token=" + localStorage.getItem("userToken")
-        })
-        .then(response => {
-          //登录成功之后获取用户数据
-          if (response.data.verify) {
-            that
-              .$http({
-                method: "post",
-                url: "/Home/Index/message",
-                data: {
-                  student_num: localStorage.getItem("student_num"),
-                  currentPage: this.currentPage,
-                  pageSize: 10
-                },
-                headers: {
-                  "Content-Type": "application/x-www-form-urlencoded"
-                },
-                //格式化
-                transformRequest: [
-                  function(data) {
-                    let ret = "";
-                    for (let it in data) {
-                      ret +=
-                        encodeURIComponent(it) +
-                        "=" +
-                        encodeURIComponent(data[it]) +
-                        "&";
-                    }
-                    return ret;
+    that
+      .$http({
+        method: "get",
+        url: "/Home/Verify/index?token=" + localStorage.getItem("userToken")
+      })
+      .then(response => {
+        //登录成功之后获取用户数据
+        if (response.data.verify) {
+          that
+            .$http({
+              method: "post",
+              url: "/Home/Index/message",
+              data: {
+                student_num: localStorage.getItem("student_num"),
+                currentPage: this.currentPage,
+                pageSize: 10
+              },
+              headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+              },
+              //格式化
+              transformRequest: [
+                function(data) {
+                  let ret = "";
+                  for (let it in data) {
+                    ret +=
+                      encodeURIComponent(it) +
+                      "=" +
+                      encodeURIComponent(data[it]) +
+                      "&";
                   }
-                ]
-              })
-              .then(response => {
-                if (response.data) {
-                  this.page_loading = false;
-                  //打开下拉加载
-                  that.loading = false;
-                  this.message_list = response.data;
-                } else {
-                  let instance = Toast("暂无数据");
-                  this.page_loading = false;
+                  return ret;
                 }
-              })
-              .catch(error => {
-                alert("网络错误");
-              });
-          } else {
-            //登录过期 => 清除前台存储的登录信息并返回登录页
-            let instance = Toast("登录已失效，请重新登录！");
-            setTimeout(() => {
-              instance.close();
-              localStorage.removeItem("userToken");
-              localStorage.removeItem("student_num");
-              this.$router.push({ path: "/pages/Login" });
-            }, 1000);
-          }
-        })
-        .catch(error => {
-          alert("网络错误！");
-        });
-    }
+              ]
+            })
+            .then(response => {
+              if (response.data) {
+                this.page_loading = false;
+                //打开下拉加载
+                that.loading = false;
+                this.message_list = response.data;
+              } else {
+                let instance = Toast("暂无数据");
+                this.page_loading = false;
+              }
+            })
+            .catch(error => {
+              alert("网络错误");
+            });
+        } else {
+          //登录过期 => 清除前台存储的登录信息并返回登录页
+          let instance = Toast("登录已失效，请重新登录！");
+          setTimeout(() => {
+            instance.close();
+            localStorage.removeItem("userToken");
+            localStorage.removeItem("student_num");
+            this.$router.push({ path: "/pages/Login" });
+          }, 1000);
+        }
+      })
+      .catch(error => {
+        alert("网络错误！");
+      });
   },
   methods: {
     loadMore() {

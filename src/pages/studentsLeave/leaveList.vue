@@ -68,7 +68,7 @@ export default {
                 url: "/Home/Index/request",
                 data: {
                   student_num: localStorage.getItem("student_num"),
-                  currentPage: this.currentPage,
+                  currentPage: that.currentPage,
                   pageSize: 10
                 },
                 headers: {
@@ -116,7 +116,7 @@ export default {
                   this.leaveList = response.data;
                 } else {
                   let instance = Toast("暂无数据");
-                  this.page_loading = false;
+                  that.page_loading = false;
                 }
               })
               .catch(error => {
@@ -129,7 +129,7 @@ export default {
               instance.close();
               localStorage.removeItem("userToken");
               localStorage.removeItem("student_num");
-              this.$router.push({ path: "/pages/Login" });
+              that.$router.push({ path: "/pages/Login" });
             }, 1000);
           }
         })
@@ -206,13 +206,13 @@ export default {
                       response.data[i].type = "补假";
                     }
                     //添加新的内容
-                    this.leaveList.push(response.data[i]);
+                    that.leaveList.push(response.data[i]);
                   }
                   that.currentPage++;
-                  this.loading = false;
+                  that.loading = false;
                   Indicator.close();
                 } else {
-                  this.loading = true;
+                  that.loading = true;
                   Indicator.close();
                   that.bottom = true;
                 }
@@ -225,7 +225,7 @@ export default {
             alert("登录已失效，请重新登录！");
             localStorage.removeItem("userToken");
             localStorage.removeItem("student_num");
-            this.$router.push({ path: "/pages/Login" });
+            that.$router.push({ path: "/pages/Login" });
           }
         })
         .catch(error => {
