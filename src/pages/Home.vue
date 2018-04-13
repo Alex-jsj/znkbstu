@@ -9,7 +9,7 @@
   <div class="home" :class='bg_choose ? "home-good": "home-bad"'>
     <div class="info">
       <div class="top-box">
-        <span class="date float-left">2018/01/31 星期三</span>
+        <span class="date float-left">{{the_date| formatTime('YMD')}}&nbsp;&nbsp;&nbsp;{{the_week}}</span>
         <span class="outlogin float-right" @click="outLogin()">退出登录</span>
       </div>
       <p class="name">{{user_info.name}}</p>
@@ -68,6 +68,8 @@ export default {
   name: "Home",
   data() {
     return {
+      the_date: new Date(), //当日时间
+      the_week: "", //当日周几
       user_info: Object,
       message: 0,
       attendance: 100,
@@ -152,6 +154,24 @@ export default {
     //修改页面title
     document.title = "设计艺术学院智慧管理系统";
     let that = this;
+    //设置当日时间
+    let the_date = that.the_date.getDay();
+    if (the_date == 1) {
+      that.the_week = "周一";
+    } else if (the_date == 2) {
+      that.the_week = "周二";
+    } else if (the_date == 3) {
+      that.the_week = "周三";
+    } else if (the_date == 4) {
+      that.the_week = "周四";
+    } else if (the_date == 5) {
+      that.the_week = "周五";
+    } else if (the_date == 6) {
+      that.the_week = "周六";
+    } else if (the_date == 7) {
+      that.the_week = "周日";
+    }
+    console.log(the_date);
     //进页面先判断登录是否过期
     that
       .$http({
@@ -327,6 +347,46 @@ export default {
       for (let i = 0; i < obj.length; i++) {
         obj[i].information = false;
       }
+    }
+  },
+  filters: {
+    // 时间过滤器
+    formatTime: function(value, type) {
+      let dataTime = "";
+      let data = new Date();
+      data.setTime(value);
+      let year = data.getFullYear();
+      let month = data.getMonth() + 1;
+      let day = data.getDate();
+      let hour = data.getHours();
+      let minute = data.getMinutes();
+      let second = data.getSeconds();
+      month < 10 ? (month = "0" + month) : month;
+      day < 10 ? (day = "0" + day) : day;
+      hour < 10 ? (hour = "0" + hour) : hour;
+      minute < 10 ? (minute = "0" + minute) : minute;
+      second < 10 ? (second = "0" + second) : second;
+      if (type == "YMD") {
+        dataTime = year + "-" + month + "-" + day;
+      } else if (type == "YMDHMS") {
+        dataTime =
+          year +
+          "-" +
+          month +
+          "-" +
+          day +
+          "  " +
+          hour +
+          ":" +
+          minute +
+          ":" +
+          second;
+      } else if (type == "HMS") {
+        dataTime = hour + ":" + minute + ":" + second;
+      } else if (type == "YM") {
+        dataTime = year + "-" + month + "-";
+      }
+      return dataTime; // 将格式化后的字符串输出到前端显示
     }
   }
 };

@@ -99,7 +99,7 @@ export default {
     },
     //提交
     formSubmit: function() {
-      var that = this;
+      let that = this;
       if (this.userTest && this.psdTest && that.canSubmit) {
         //验证通过
         this.$http({

@@ -38,6 +38,7 @@
         </ol>
         <!-- 课表 -->
         <div class="overflow-container">
+          <div class="class-container"></div>
           <ul class="list-item float-left" v-for="(list,index) in myTimeTableList" :key="list.id">
             <li class="item item-header" :class="{'weeks-show':list.weeks_show}">
               <p class="week">{{list.weeks}}</p>
@@ -83,13 +84,15 @@ export default {
   },
   methods: {
     weekChange() {
-      let father_dom = document.getElementsByClassName("overflow-container")[0];
-      let child_dom = document.getElementsByClassName("class-table");
+      let that = this;
       //切换周次的时候移除之前的课表
+      let father_dom = document.querySelector(".overflow-container");
+      let child_dom = document.querySelectorAll(".class-table");
+      let ul_dom = document.querySelectorAll(".list-item");
       for (let i = 0; i < child_dom.length; i++) {
-        child_dom[i].parentNode.removeChild(child_dom[i]);
+        ul_dom[0].parentNode.removeChild(child_dom[i]);
       }
-      this.timeTableAjax(this.week.value + 1);
+      that.timeTableAjax(that.week.value + 1);
     },
     //课表ajax
     timeTableAjax(cycle_week) {
@@ -189,10 +192,22 @@ export default {
                     let p1 = document.createElement("p");
                     let p2 = document.createElement("p");
                     let p3 = document.createElement("p");
-                    let bg1 = "#b3b3b3";
-                    let bg2 = "#808080";
                     let bg;
-                    parseInt(day) % 2 == 0 ? (bg = bg1) : (bg = bg2);
+                    if (parseInt(day) == 0) {
+                      bg = "#f56c6c";
+                    } else if (parseInt(day) == 1) {
+                      bg = "#3a8ee6";
+                    } else if (parseInt(day) == 2) {
+                      bg = "#67c23a";
+                    } else if (parseInt(day) == 3) {
+                      bg = "#009688";
+                    } else if (parseInt(day) == 4) {
+                      bg = "#e6a23c";
+                    } else if (parseInt(day) == 5) {
+                      bg = "#409eff";
+                    } else if (parseInt(day) == 6) {
+                      bg = "#3f51b5";
+                    }
                     let style =
                       "width:2.8rem;height:" +
                       3.75 * that.myTimeTableList[day].count[key] +
@@ -202,7 +217,7 @@ export default {
                       2.8 * day +
                       "rem;background:" +
                       bg +
-                      ";padding:0.35rem;border-right:1px solid #9f9fa0;border-bottom:1px solid #9f9fa0;";
+                      ";padding:0.35rem;border-bottom:1px solid #ddd;";
                     let style_p =
                       "font-size:0.47rem;color:#fff;margin-bottom:0.2rem;";
                     div.setAttribute("style", style);
@@ -212,6 +227,8 @@ export default {
                     p1.setAttribute("style", style_p);
                     p2.setAttribute("style", style_p);
                     p3.setAttribute("style", style_p);
+                    // let con = document.createElement("div");
+                    // con.className = 'class-container';
                     let con = document.getElementsByClassName(
                       "overflow-container"
                     )[0];
@@ -219,6 +236,7 @@ export default {
                     div.appendChild(p2);
                     div.appendChild(p3);
                     con.appendChild(div);
+                    // con_container.appendChild(con);
                   }
                   //比较时间，当前日高亮
                   let date_now = new Date();
@@ -361,20 +379,20 @@ export default {
         > li {
           width: 100%;
           height: 3.75rem;
-          border-bottom: 1px solid #9f9fa0;
+          border-bottom: 1px solid #ddd;
           text-align: center;
           overflow: hidden;
           position: relative;
           &:first-child {
             height: 2.25rem;
             background: #fff;
-            border-bottom: 0 solid #9f9fa0;
+            border-bottom: 0 solid #ddd;
             > span {
               display: none;
             }
           }
           &:last-child {
-            border-bottom: 0 solid #9f9fa0;
+            border-bottom: 0 solid #ddd;
           }
           > span {
             display: block;
@@ -402,7 +420,8 @@ export default {
       }
       .overflow-container {
         width: 19.6rem;
-        background: #5d5d5d;
+        // background: #5d5d5d;
+        background: #fff;
         margin-left: 2rem;
         position: relative;
         overflow: hidden;
@@ -414,40 +433,25 @@ export default {
         }
         .list-item {
           width: 2.8rem;
-          &:nth-child(2) {
-            .bg {
-              background: #808080;
-            }
-          }
-          &:nth-child(4) {
-            .bg {
-              background: #808080;
-            }
-          }
-          &:nth-child(6) {
-            .bg {
-              background: #808080;
-            }
-          }
           .item {
             width: 100%;
             height: 3.75rem;
-            border-bottom: 1px solid #9f9fa0;
-            border-right: 1px solid #9f9fa0;
+            border-bottom: 1px solid #ddd;
+            border-right: 1px solid #ddd;
             font-size: 0.47rem;
             padding: 0.2rem;
             overflow: hidden;
             color: #808080;
             &:first-child {
               height: 2.25rem;
-              border-bottom: 0 solid #9f9fa0;
-              border-right: 0 solid #9f9fa0;
+              border-bottom: 0 solid #ddd;
+              border-right: 0 solid #ddd;
               background: #fff;
               padding: 0;
               font-size: 0.55rem;
             }
             &:last-child {
-              border-bottom: 0 solid #9f9fa0;
+              border-bottom: 0 solid #ddd;
             }
             .week {
               margin-top: 0.4rem;
